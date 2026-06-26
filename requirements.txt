@@ -157,8 +157,8 @@ python-json-logger==4.1.0
 python-multipart==0.0.29
 pytokens==0.4.1
 pytz==2026.2
-pywin32==311
-pywinpty==3.0.3
+pywin32==311; sys_platform == "win32"
+pywinpty==3.0.3; sys_platform == "win32"
 PyYAML==6.0.1
 pyzmq==27.1.0
 referencing==0.37.0
@@ -208,7 +208,7 @@ websocket-client==1.9.0
 websockets==16.0
 Werkzeug==3.1.8
 widgetsnbextension==4.0.15
-win32_setctime==1.2.0
+win32_setctime==1.2.0; sys_platform == "win32"
 xgboost==2.0.3
 yarl==1.24.2
 zipp==4.1.0
