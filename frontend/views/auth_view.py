@@ -51,15 +51,16 @@ def render_auth_view(api_client: RetainIQAPIClient, primary_color_hex: str, seco
             gap: 3rem !important;
         }}
         
-        /* Custom Glassmorphism card for login form */
+        /* Custom Glassmorphism card for login form with stronger glass and depth */
         div[data-testid="stForm"] {{
-            background-color: rgba(15, 23, 42, 0.4) !important;
-            backdrop-filter: blur(24px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.08) !important;
-            border-top: 1.5px solid rgba({rgb_primary[0]}, {rgb_primary[1]}, {rgb_primary[2]}, 0.3) !important;
+            background-color: rgba(15, 23, 42, 0.65) !important;
+            backdrop-filter: blur(32px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            border-top: 1.5px solid rgba({rgb_primary[0]}, {rgb_primary[1]}, {rgb_primary[2]}, 0.45) !important;
             border-radius: 16px !important;
             padding: 3rem 2.5rem !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6) !important;
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+            transition: transform 0.3s ease, box-shadow 0.3s ease !important;
         }}
         
         /* Force remove Streamlit's default border and hover border inside form container */
@@ -68,86 +69,131 @@ def render_auth_view(api_client: RetainIQAPIClient, primary_color_hex: str, seco
             padding: 0 !important;
         }}
         
-        /* Custom styles for text inputs including background SVG icons */
+        /* Custom styles for text inputs including refined placeholder contrast and svg icons */
         div[data-testid="stForm"] input[type="text"] {{
-            background-color: rgba(2, 6, 23, 0.7) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            background-color: rgba(2, 6, 23, 0.75) !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
             color: #f8fafc !important;
             border-radius: 8px !important;
-            padding: 0.75rem 0.75rem 0.75rem 2.5rem !important;
+            padding: 0.8rem 0.8rem 0.8rem 2.8rem !important;
             font-family: 'Inter', sans-serif !important;
             font-size: 0.9rem !important;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>') !important;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%2364748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>') !important;
             background-repeat: no-repeat !important;
-            background-position: 12px center !important;
-            transition: all 0.2s !important;
+            background-position: 14px center !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
         }}
         
         div[data-testid="stForm"] input[type="password"] {{
-            background-color: rgba(2, 6, 23, 0.7) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            background-color: rgba(2, 6, 23, 0.75) !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
             color: #f8fafc !important;
             border-radius: 8px !important;
-            padding: 0.75rem 0.75rem 0.75rem 2.5rem !important;
+            padding: 0.8rem 0.8rem 0.8rem 2.8rem !important;
             font-family: 'Inter', sans-serif !important;
             font-size: 0.9rem !important;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>') !important;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%2364748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>') !important;
             background-repeat: no-repeat !important;
-            background-position: 12px center !important;
-            transition: all 0.2s !important;
+            background-position: 14px center !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }}
+        
+        /* Refine eye icon visibility button to match glass theme */
+        div[data-testid="stForm"] button[data-testid="stTextInputAdornment"] {{
+            background-color: transparent !important;
+            border: none !important;
+            color: #64748b !important;
+            border-radius: 50% !important;
+            margin-right: 6px !important;
+            transition: color 0.2s, background-color 0.2s !important;
+        }}
+        div[data-testid="stForm"] button[data-testid="stTextInputAdornment"]:hover {{
+            color: #f8fafc !important;
+            background-color: rgba(255, 255, 255, 0.05) !important;
         }}
         
         div[data-testid="stForm"] input:focus {{
             border-color: {primary_color_hex} !important;
-            box-shadow: 0 0 0 2px rgba({rgb_primary[0]}, {rgb_primary[1]}, {rgb_primary[2]}, 0.25) !important;
+            box-shadow: 0 0 0 3px rgba({rgb_primary[0]}, {rgb_primary[1]}, {rgb_primary[2]}, 0.3), 0 0 12px rgba({rgb_primary[0]}, {rgb_primary[1]}, {rgb_primary[2]}, 0.15) !important;
+            background-color: rgba(2, 6, 23, 0.85) !important;
             outline: none !important;
         }}
         
-        /* Custom styled checkboxes */
+        /* Custom styled checkboxes with better spacing and alignment */
         div[data-testid="stCheckbox"] label {{
-            color: #94a3b8 !important;
-            font-size: 0.85rem !important;
+            color: #cbd5e1 !important;
+            font-size: 0.88rem !important;
             font-family: 'Inter', sans-serif !important;
+            font-weight: 500 !important;
+            letter-spacing: 0.2px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
         }}
         div[data-testid="stCheckbox"] div[role="checkbox"] {{
-            background-color: rgba(2, 6, 23, 0.7) !important;
-            border-color: rgba(255, 255, 255, 0.15) !important;
+            background-color: rgba(2, 6, 23, 0.8) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
             border-radius: 4px !important;
+            width: 16px !important;
+            height: 16px !important;
+            transition: all 0.2s ease !important;
         }}
         div[data-testid="stCheckbox"] div[role="checkbox"][aria-checked="true"] {{
             background-color: {primary_color_hex} !important;
             border-color: {primary_color_hex} !important;
         }}
         
-        /* Submit Button Customizer */
+        /* Submit Button premium gradient and hover styling */
         div[data-testid="stForm"] button[type="submit"] {{
-            background: linear-gradient(135deg, {primary_color_hex} 0%, {primary_color_hex}dd 100%) !important;
+            background: linear-gradient(135deg, {primary_color_hex} 0%, #8b5cf6 100%) !important;
             color: #ffffff !important;
             border: none !important;
             border-radius: 8px !important;
-            font-weight: 600 !important;
+            font-weight: 700 !important;
             font-size: 0.95rem !important;
-            padding: 0.75rem 0 !important;
+            letter-spacing: 0.5px !important;
+            padding: 0.85rem 0 !important;
             width: 100% !important;
-            transition: all 0.2s ease-in-out !important;
-            box-shadow: 0 4px 14px rgba({rgb_primary[0]}, {rgb_primary[1]}, {rgb_primary[2]}, 0.3) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            box-shadow: 0 4px 18px rgba({rgb_primary[0]}, {rgb_primary[1]}, {rgb_primary[2]}, 0.35) !important;
             cursor: pointer !important;
             margin-top: 1.2rem !important;
         }}
         div[data-testid="stForm"] button[type="submit"]:hover {{
             filter: brightness(1.1) !important;
-            transform: translateY(-1px) !important;
-            box-shadow: 0 6px 20px rgba({rgb_primary[0]}, {rgb_primary[1]}, {rgb_primary[2]}, 0.4) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 8px 24px rgba({rgb_primary[0]}, {rgb_primary[1]}, {rgb_primary[2]}, 0.5) !important;
         }}
         div[data-testid="stForm"] button[type="submit"]:active {{
-            transform: translateY(1px) !important;
-            box-shadow: 0 2px 10px rgba({rgb_primary[0]}, {rgb_primary[1]}, {rgb_primary[2]}, 0.2) !important;
+            transform: translateY(0px) !important;
+            box-shadow: 0 4px 12px rgba({rgb_primary[0]}, {rgb_primary[1]}, {rgb_primary[2]}, 0.25) !important;
+        }}
+        
+        /* Micro-interactions for features cards */
+        .feature-card {{
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }}
+        .feature-card:hover {{
+            transform: translateY(-3px) !important;
+            border-color: rgba({rgb_primary[0]}, {rgb_primary[1]}, {rgb_primary[2]}, 0.25) !important;
+            background-color: rgba(15, 23, 42, 0.45) !important;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3) !important;
+        }}
+        
+        /* SSO login button hover styling */
+        .sso-btn {{
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }}
+        .sso-btn:hover {{
+            border-color: rgba(167, 139, 250, 0.3) !important;
+            background-color: rgba(255, 255, 255, 0.04) !important;
+            transform: translateY(-1px) !important;
         }}
     </style>""".replace("\n", " "), unsafe_allow_html=True)
     
     # 1. Float Top Right Pill: Secure Connection Banner
     secure_pill_html = """
-    <div style="position: absolute; top: 30px; right: 40px; z-index: 999; display: flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; color: #f8fafc; font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.25);">
+    <div style="position: absolute; top: 30px; right: 45px; z-index: 999; display: flex; align-items: center; gap: 6px; padding: 6px 16px; background: rgba(15, 23, 42, 0.55); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 20px; color: #f8fafc; font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.5px; box-shadow: 0 4px 14px rgba(0,0,0,0.3);">
         <svg role="img" aria-label="Secure Connection Shield" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
         Secure Login
     </div>
@@ -205,31 +251,31 @@ def render_auth_view(api_client: RetainIQAPIClient, primary_color_hex: str, seco
                 </p>
             </div>
 
-            <!-- Features Cards Grid -->
+            <!-- Features Cards Grid - Refined Padding, Icon Sizing, and Typography -->
             <div style="display: flex; gap: 14px; flex-wrap: wrap; margin-top: 2rem; margin-bottom: 2rem;">
-                <div style="flex: 1; min-width: 105px; padding: 16px 12px; background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                    <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 8px; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 10px; color: #6366f1;">
-                        <svg role="img" aria-label="Predictions Icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                <div class="feature-card" style="flex: 1; min-width: 105px; padding: 18px 14px; background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; text-align: center; box-shadow: 0 6px 16px rgba(0,0,0,0.18);">
+                    <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 8px; width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px; color: #6366f1;">
+                        <svg role="img" aria-label="Predictions Icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
                     </div>
-                    <div style="font-weight: 600; font-size: 0.75rem; color: #f8fafc; font-family: 'Inter', sans-serif; line-height: 1.3;">AI-Powered Predictions</div>
+                    <div style="font-weight: 600; font-size: 0.82rem; color: #f8fafc; font-family: 'Inter', sans-serif; line-height: 1.4;">AI-Powered Predictions</div>
                 </div>
-                <div style="flex: 1; min-width: 105px; padding: 16px 12px; background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                    <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 8px; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 10px; color: #6366f1;">
-                        <svg role="img" aria-label="Insights Icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                <div class="feature-card" style="flex: 1; min-width: 105px; padding: 18px 14px; background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; text-align: center; box-shadow: 0 6px 16px rgba(0,0,0,0.18);">
+                    <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 8px; width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px; color: #6366f1;">
+                        <svg role="img" aria-label="Insights Icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                     </div>
-                    <div style="font-weight: 600; font-size: 0.75rem; color: #f8fafc; font-family: 'Inter', sans-serif; line-height: 1.3;">Customer Insights</div>
+                    <div style="font-weight: 600; font-size: 0.82rem; color: #f8fafc; font-family: 'Inter', sans-serif; line-height: 1.4;">Customer Insights</div>
                 </div>
-                <div style="flex: 1; min-width: 105px; padding: 16px 12px; background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                    <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 8px; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 10px; color: #6366f1;">
-                        <svg role="img" aria-label="Explainable AI Icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <div class="feature-card" style="flex: 1; min-width: 105px; padding: 18px 14px; background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; text-align: center; box-shadow: 0 6px 16px rgba(0,0,0,0.18);">
+                    <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 8px; width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px; color: #6366f1;">
+                        <svg role="img" aria-label="Explainable AI Icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                     </div>
-                    <div style="font-weight: 600; font-size: 0.75rem; color: #f8fafc; font-family: 'Inter', sans-serif; line-height: 1.3;">Explainable AI (XAI)</div>
+                    <div style="font-weight: 600; font-size: 0.82rem; color: #f8fafc; font-family: 'Inter', sans-serif; line-height: 1.4;">Explainable AI (XAI)</div>
                 </div>
-                <div style="flex: 1; min-width: 105px; padding: 16px 12px; background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                    <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 8px; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 10px; color: #6366f1;">
-                        <svg role="img" aria-label="Retention Chart Icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path></svg>
+                <div class="feature-card" style="flex: 1; min-width: 105px; padding: 18px 14px; background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; text-align: center; box-shadow: 0 6px 16px rgba(0,0,0,0.18);">
+                    <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 8px; width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px; color: #6366f1;">
+                        <svg role="img" aria-label="Retention Chart Icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path></svg>
                     </div>
-                    <div style="font-weight: 600; font-size: 0.75rem; color: #f8fafc; font-family: 'Inter', sans-serif; line-height: 1.3;">Data-Driven Retention</div>
+                    <div style="font-weight: 600; font-size: 0.82rem; color: #f8fafc; font-family: 'Inter', sans-serif; line-height: 1.4;">Data-Driven Retention</div>
                 </div>
             </div>
         </div>
@@ -252,10 +298,10 @@ def render_auth_view(api_client: RetainIQAPIClient, primary_color_hex: str, seco
             st.markdown(lock_header_html, unsafe_allow_html=True)
             
             # Form Fields: Inputs are empty by default as requested
-            st.markdown("<div style='font-family: Inter, sans-serif; font-size: 0.85rem; font-weight: 500; color: #e2e8f0; margin-bottom: 6px;'>Username</div>", unsafe_allow_html=True)
+            st.markdown("<div style='font-family: Inter, sans-serif; font-size: 0.85rem; font-weight: 500; color: #cbd5e1; margin-bottom: 6px;'>Username</div>", unsafe_allow_html=True)
             username = st.text_input("Username", value="", placeholder="Enter your username", label_visibility="collapsed")
             
-            st.markdown("<div style='font-family: Inter, sans-serif; font-size: 0.85rem; font-weight: 500; color: #e2e8f0; margin-bottom: 6px; margin-top: 1.2rem;'>Password</div>", unsafe_allow_html=True)
+            st.markdown("<div style='font-family: Inter, sans-serif; font-size: 0.85rem; font-weight: 500; color: #cbd5e1; margin-bottom: 6px; margin-top: 1.2rem;'>Password</div>", unsafe_allow_html=True)
             password = st.text_input("Password", type="password", value="", placeholder="Enter your password", label_visibility="collapsed")
             
             # Columns layout for Remember Me and Forgot Password
@@ -275,7 +321,7 @@ def render_auth_view(api_client: RetainIQAPIClient, primary_color_hex: str, seco
                 <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.08);"></div>
             </div>
             
-            <div style="border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 0.75rem 0; text-align: center; font-weight: 600; font-size: 0.9rem; color: #f8fafc; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; background-color: rgba(255,255,255,0.01); transition: all 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer;">
+            <div class="sso-btn" style="border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 0.75rem 0; text-align: center; font-weight: 600; font-size: 0.9rem; color: #f8fafc; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; background-color: rgba(255,255,255,0.01); transition: all 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer;">
                 <svg role="img" aria-label="Token Key Shield" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                 Login with Token
             </div>
@@ -301,11 +347,11 @@ def render_auth_view(api_client: RetainIQAPIClient, primary_color_hex: str, seco
                             detail = data.get("detail", "Invalid credentials")
                             st.error(f"Authentication failed: {detail}")
                             
-    # 3. Bottom Centered Encrypted Data Banner
+    # 3. Bottom Centered Encrypted Data Banner - Reduced dominance, softer background, lighter shadow
     bottom_encrypt_html = """
     <div style="display: flex; justify-content: center; margin-top: 4rem;">
-        <div style="display: flex; align-items: center; gap: 8px; padding: 6px 16px; background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px; color: #94a3b8; font-family: 'Inter', sans-serif; font-size: 0.78rem; font-weight: 500;">
-            <svg role="img" aria-label="Encryption Padlock" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <div style="display: flex; align-items: center; gap: 8px; padding: 6px 16px; background: rgba(15, 23, 42, 0.2); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 20px; color: #64748b; font-family: 'Inter', sans-serif; font-size: 0.78rem; font-weight: 500; box-shadow: none;">
+            <svg role="img" aria-label="Encryption Padlock" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
             Your data is encrypted and secure
         </div>
     </div>
