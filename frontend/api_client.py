@@ -8,7 +8,14 @@ class RetainIQAPIClient:
     and the FastAPI backend service.
     """
     def __init__(self, base_url: str = None):
-        self.base_url = base_url or os.getenv("API_BASE_URL", "http://127.0.0.1:8000")
+        if not base_url:
+            try:
+                base_url = st.secrets.get("API_BASE_URL")
+            except Exception:
+                pass
+            if not base_url:
+                base_url = os.getenv("API_BASE_URL", "http://127.0.0.1:8000")
+        self.base_url = base_url
         
     def get_headers(self) -> dict:
         """Helper to retrieve JWT authentication headers from st.session_state."""
