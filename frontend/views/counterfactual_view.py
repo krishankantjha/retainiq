@@ -211,6 +211,31 @@ def render_counterfactual_view(
     with col_result:
         st.markdown("### Simulation Result")
         
+        # Build modified customer dictionary from sliders and selectors
+        customer_dict = {
+            "customerID": customer.customer_id,
+            "gender": customer.gender,
+            "SeniorCitizen": customer.senior_citizen,
+            "Partner": customer.partner,
+            "Dependents": customer.dependents,
+            "tenure": sim_tenure,
+            "PhoneService": customer.phone_service,
+            "MultipleLines": customer.multiple_lines,
+            "InternetService": customer.internet_service,
+            "OnlineSecurity": sim_security,
+            "OnlineBackup": customer.online_backup,
+            "DeviceProtection": customer.device_protection,
+            "TechSupport": sim_support,
+            "StreamingTV": customer.streaming_tv,
+            "StreamingMovies": customer.streaming_movies,
+            "Contract": sim_contract,
+            "PaperlessBilling": sim_billing,
+            "PaymentMethod": sim_payment,
+            "MonthlyCharges": sim_charges,
+            "TotalCharges": sim_charges * sim_tenure,
+            "Churn": customer.churn
+        }
+        
         # Execute simulation over API client
         status, res = api_client.simulate_intervention(customer_dict)
         if status == 200:
