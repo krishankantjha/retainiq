@@ -144,7 +144,7 @@ def render_auth_view(api_client: RetainIQAPIClient, primary_color_hex: str, seco
         }}
         
         /* Submit Button premium gradient and hover styling */
-        div[data-testid="stForm"] button {{
+        div[data-testid="stFormSubmitButton"] button {{
             background: linear-gradient(135deg, {primary_color_hex} 0%, #8b5cf6 100%) !important;
             color: #ffffff !important;
             border: none !important;
@@ -159,16 +159,16 @@ def render_auth_view(api_client: RetainIQAPIClient, primary_color_hex: str, seco
             cursor: pointer !important;
             margin-top: 0.4rem !important;
         }}
-        div[data-testid="stForm"] button p {{
+        div[data-testid="stFormSubmitButton"] button p {{
             color: #ffffff !important;
             font-weight: 700 !important;
         }}
-        div[data-testid="stForm"] button:hover {{
+        div[data-testid="stFormSubmitButton"] button:hover {{
             filter: brightness(1.1) !important;
             transform: translateY(-2px) !important;
             box-shadow: 0 8px 24px rgba({rgb_primary[0]}, {rgb_primary[1]}, {rgb_primary[2]}, 0.5) !important;
         }}
-        div[data-testid="stForm"] button:active {{
+        div[data-testid="stFormSubmitButton"] button:active {{
             transform: translateY(0px) !important;
             box-shadow: 0 4px 12px rgba({rgb_primary[0]}, {rgb_primary[1]}, {rgb_primary[2]}, 0.25) !important;
         }}
@@ -368,7 +368,7 @@ def render_auth_view(api_client: RetainIQAPIClient, primary_color_hex: str, seco
                 with c_chk:
                     remember_me = st.checkbox("Remember Me", value=True, key="login_remember")
                 with c_lnk:
-                    st.markdown("<div style='text-align: right; font-family: Inter, sans-serif; font-size: 0.85rem; margin-top: -3px;'><a href='#' style='color: #6366f1; text-decoration: none; font-weight: 500;'>Forgot Password?</a></div>", unsafe_allow_html=True)
+                    st.markdown("<div style='text-align: right; font-family: Inter, sans-serif; font-size: 0.85rem; margin-top: -14px;'><a href='#' style='color: #6366f1; text-decoration: none; font-weight: 500;'>Forgot Password?</a></div>", unsafe_allow_html=True)
                 
                 submitted = st.form_submit_button("Login to Dashboard   →", use_container_width=True)
                 
