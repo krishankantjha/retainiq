@@ -132,10 +132,10 @@ def render_segments_view(
             paper_bgcolor="rgba(0,0,0,0)",
             plot_bgcolor="rgba(0,0,0,0)",
             font=dict(family="Inter, sans-serif", color="#94a3b8"),
-            margin=dict(t=10, b=10, l=10, r=10),
-            height=280,
+            margin=dict(t=10, b=60, l=10, r=10),
+            height=320,
             showlegend=True,
-            legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5)
+            legend=dict(orientation="h", yanchor="top", y=-0.1, xanchor="center", x=0.5)
         )
         st.plotly_chart(fig, use_container_width=True)
 
