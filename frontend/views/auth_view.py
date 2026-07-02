@@ -292,6 +292,15 @@ def render_auth_view(api_client: RetainIQAPIClient, primary_color_hex: str, seco
         div[data-testid="stSelectbox"] * {{
             cursor: pointer !important;
         }}
+
+        /* Remove the vertical separator line between the text and the dropdown arrow */
+        div[data-testid="stSelectbox"] [data-baseweb="select"] [role="button"] + div,
+        div[data-testid="stSelectbox"] [data-baseweb="select"] [role="combobox"] + div,
+        div[data-testid="stSelectbox"] [data-baseweb="select"] [class*="indicator"] {{
+            border-left: none !important;
+            border-right: none !important;
+            border-left-width: 0px !important;
+        }}
     </style>""".replace("\n", " "), unsafe_allow_html=True)
     
     # 2. Setup structural grid columns for Left informational / Right form panels
