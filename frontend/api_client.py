@@ -36,17 +36,49 @@ class RetainIQAPIClient:
         except Exception as e:
             return 500, {"detail": f"Failed to connect to API server: {str(e)}"}
 
-    def register(self, username, password):
-        """Registers a new user account with custom credentials."""
+    def register(self, username, password, security_question, security_answer):
+        """Registers a new user account with custom credentials and security question."""
         try:
             response = requests.post(
                 f"{self.base_url}/api/v1/auth/register",
-                json={"username": username, "password": password},
+                json={
+                    "username": username,
+                    "password": password,
+                    "security_question": security_question,
+                    "security_answer": security_answer
+                },
                 timeout=5
             )
             return response.status_code, response.json()
         except Exception as e:
             return 500, {"detail": f"Failed to connect to API server: {str(e)}"}
+
+    def get_security_question(self, username: str):
+        """Queries registered security question for the input username."""
+        try:
+            response = requests.get(
+                f"{self.base_url}/api/v1/auth/security-question/{username}",
+                timeout=5
+            )
+            return response.status_code, response.json()
+        except Exception as e:
+            return 500, {"detail": f"Failed to query security question: {str(e)}"}
+
+    def reset_password(self, username, security_answer, new_password):
+        """Submits security answer verification and new password to the reset endpoint."""
+        try:
+            response = requests.post(
+                f"{self.base_url}/api/v1/auth/reset-password",
+                json={
+                    "username": username,
+                    "security_answer": security_answer,
+                    "new_password": new_password
+                },
+                timeout=5
+            )
+            return response.status_code, response.json()
+        except Exception as e:
+            return 500, {"detail": f"Failed to reset password: {str(e)}"}
 
     def get_overview(self):
         """Fetches high-level cohort overview metrics."""

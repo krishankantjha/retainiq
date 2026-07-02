@@ -362,131 +362,224 @@ def render_auth_view(api_client: RetainIQAPIClient, primary_color_hex: str, seco
         
     with col_right:
         # Glassmorphic Login / Signup Tabs
-        tab_signin, tab_signup = st.tabs(["Sign In", "Sign Up"])
+        query_params = st.query_params
+        show_forgot = query_params.get("action") == "forgot"
         
-        with tab_signin:
-            with st.form("login_form", clear_on_submit=False):
-                # Centered Lock graphic header inside card
-                lock_header_html = """
+        if show_forgot:
+            with st.form("forgot_password_form", clear_on_submit=False):
+                # Centered header inside card
+                forgot_header_html = """
                 <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 1.5rem;">
-                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 6px; color: #10b981; font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem;">
-                        <svg role="img" aria-label="Secure Connection Shield" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                        Secure Connection
+                    <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 12px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 6px; color: #6366f1; font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem;">
+                        <svg role="img" aria-label="Key Reset" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+                        Password Recovery
                     </div>
-                    <h2 style="text-align: center; margin: 0; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.7rem; color: #f8fafc;">Welcome Back</h2>
-                    <p style="text-align: center; margin: 0.3rem 0 0 0; color: #94a3b8; font-size: 0.88rem; font-family: 'Inter', sans-serif;">Sign in to access your RetainIQ dashboard</p>
+                    <h2 style="text-align: center; margin: 0; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.7rem; color: #f8fafc;">Reset Password</h2>
+                    <p style="text-align: center; margin: 0.3rem 0 0 0; color: #94a3b8; font-size: 0.88rem; font-family: 'Inter', sans-serif;">Verify your identity to choose a new password</p>
                 </div>
                 """
-                st.markdown(lock_header_html, unsafe_allow_html=True)
+                st.markdown(forgot_header_html, unsafe_allow_html=True)
                 
-                # Form Fields
+                # Username lookup step
                 st.markdown("<div style='font-family: Inter, sans-serif; font-size: 0.85rem; font-weight: 500; color: #cbd5e1; margin-bottom: 6px;'>Username</div>", unsafe_allow_html=True)
-                username = st.text_input("Username", value="", placeholder="Enter your username", label_visibility="collapsed", key="login_username")
+                forgot_username = st.text_input("Username", value="", placeholder="Enter your username", label_visibility="collapsed", key="forgot_username_field")
                 
-                st.markdown("<div style='font-family: Inter, sans-serif; font-size: 0.85rem; font-weight: 500; color: #cbd5e1; margin-bottom: 6px; margin-top: 1.2rem;'>Password</div>", unsafe_allow_html=True)
-                password = st.text_input("Password", type="password", value="", placeholder="Enter your password", label_visibility="collapsed", key="login_password")
-                
-                # Columns layout for Remember Me and Forgot Password
-                c_chk, c_lnk = st.columns([1.1, 0.9])
-                with c_chk:
-                    remember_me = st.checkbox("Remember Me", value=False, key="login_remember")
-                with c_lnk:
-                    st.markdown("<div style='text-align: right; font-family: Inter, sans-serif; font-size: 0.85rem; margin-top: 0px;'><a href='#' style='color: #6366f1; text-decoration: none; font-weight: 500;'>Forgot Password?</a></div>", unsafe_allow_html=True)
-                
-                submitted = st.form_submit_button("Login to Dashboard   →", use_container_width=True)
-                
-                # Footer Terms and Encryption status (no SSO button)
-                footer_html = """
-                <div style="text-align: center; font-size: 0.78rem; color: #64748b; font-family: 'Inter', sans-serif; margin-top: 2rem; line-height: 1.4;">
-                    By continuing, you agree to our <a href="#" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #94a3b8;">Terms of Service</a> and <a href="#" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #94a3b8;">Privacy Policy</a>
-                </div>
-                
-                <div style="display: flex; justify-content: center; margin-top: 1.5rem; margin-bottom: 0.5rem;">
-                    <div style="display: flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 20px; color: #10b981; font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 500;">
-                        <svg role="img" aria-label="Encryption Padlock" xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                        Encrypted Connection
-                    </div>
-                </div>
-                """
-                st.markdown(footer_html.replace("\n", " "), unsafe_allow_html=True)
-                
-                if submitted:
-                    if not username or not password:
-                        st.error("Username and password are required to sign in.")
+                # Fetch security question if username is provided
+                security_q = ""
+                if forgot_username:
+                    status_code, res_data = api_client.get_security_question(forgot_username)
+                    if status_code == 200:
+                        security_q = res_data.get("security_question", "")
                     else:
-                        with st.spinner("Signing in..."):
-                            status_code, data = api_client.login(username, password)
-                            if status_code == 200:
-                                st.session_state.jwt_token = data["access_token"]
-                                st.session_state.current_user = username
-                                st.toast("Login successful. Welcome back!", icon="👋")
-                                st.rerun()
-                            else:
-                                detail = data.get("detail", "Invalid credentials")
-                                st.error(f"Authentication failed: {detail}")
-                                
-        with tab_signup:
-            with st.form("signup_form", clear_on_submit=False):
-                # Centered Sign Up graphic header inside card
-                signup_header_html = """
-                <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 1.5rem;">
-                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 6px; color: #10b981; font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem;">
-                        <svg role="img" aria-label="Secure Connection Shield" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                        Secure Connection
-                    </div>
-                    <h2 style="text-align: center; margin: 0; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.7rem; color: #f8fafc;">Create Account</h2>
-                    <p style="text-align: center; margin: 0.3rem 0 0 0; color: #94a3b8; font-size: 0.88rem; font-family: 'Inter', sans-serif;">Register to set up your profile and dashboard</p>
-                </div>
-                """
-                st.markdown(signup_header_html, unsafe_allow_html=True)
+                        detail = res_data.get("detail", "Username not found or recovery unavailable")
+                        st.markdown(f"<div style='color: #f87171; font-size: 0.82rem; font-family: Inter, sans-serif; margin-bottom: 10px; font-weight: 500;'>⚠️ {detail}</div>", unsafe_allow_html=True)
                 
-                st.markdown("<div style='font-family: Inter, sans-serif; font-size: 0.85rem; font-weight: 500; color: #cbd5e1; margin-bottom: 6px;'>Username</div>", unsafe_allow_html=True)
-                new_username = st.text_input("Username", value="", placeholder="Choose a username", label_visibility="collapsed", key="signup_username")
-                
-                st.markdown("<div style='font-family: Inter, sans-serif; font-size: 0.85rem; font-weight: 500; color: #cbd5e1; margin-bottom: 6px; margin-top: 1.2rem;'>Password</div>", unsafe_allow_html=True)
-                new_password = st.text_input("Password", type="password", value="", placeholder="Choose a password", label_visibility="collapsed", key="signup_password")
-                if new_password and len(new_password) < 6:
-                    st.markdown("<div style='color: #f87171; font-size: 0.78rem; margin-top: 6px; margin-bottom: -6px; font-family: Inter, sans-serif; font-weight: 500;'>Password must be at least 6 characters long</div>", unsafe_allow_html=True)
-                
-                st.markdown("<div style='font-family: Inter, sans-serif; font-size: 0.85rem; font-weight: 500; color: #cbd5e1; margin-bottom: 6px; margin-top: 1.2rem;'>Confirm Password</div>", unsafe_allow_html=True)
-                confirm_password = st.text_input("Confirm Password", type="password", value="", placeholder="Confirm your password", label_visibility="collapsed", key="signup_confirm_password")
-                
-                # Symmetrical vertical padding spacer instead of checkbox row
+                # Render question and answer inputs if question was fetched successfully
+                if security_q:
+                    st.markdown(f"<div style='font-family: Inter, sans-serif; font-size: 0.85rem; font-weight: 500; color: #cbd5e1; margin-bottom: 6px; margin-top: 1.2rem;'>Security Question: <span style='color: #a78bfa; font-weight: 600;'>{security_q}</span></div>", unsafe_allow_html=True)
+                    security_ans = st.text_input("Security Answer", value="", placeholder="Enter your security answer", label_visibility="collapsed", key="forgot_security_answer_field")
+                    
+                    st.markdown("<div style='font-family: Inter, sans-serif; font-size: 0.85rem; font-weight: 500; color: #cbd5e1; margin-bottom: 6px; margin-top: 1.2rem;'>New Password</div>", unsafe_allow_html=True)
+                    new_pass = st.text_input("New Password", type="password", value="", placeholder="Choose a new password", label_visibility="collapsed", key="forgot_new_password_field")
+                else:
+                    security_ans = ""
+                    new_pass = ""
+                    
                 st.markdown("<div style='margin-top: 1.5rem;'></div>", unsafe_allow_html=True)
                 
-                register_submitted = st.form_submit_button("Register Account   →", use_container_width=True)
+                reset_submitted = st.form_submit_button("Reset Password   →", use_container_width=True)
                 
-                # Bottom Terms and connection badge inside signup tab for perfect height symmetry
-                signup_footer_html = """
-                <div style="text-align: center; font-size: 0.78rem; color: #64748b; font-family: 'Inter', sans-serif; margin-top: 1.8rem; line-height: 1.4;">
-                    By continuing, you agree to our <a href="#" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #94a3b8;">Terms of Service</a> and <a href="#" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #94a3b8;">Privacy Policy</a>
-                </div>
+                # Link back to Sign In using query param target=_self
+                st.markdown("<div style='text-align: center; font-family: Inter, sans-serif; font-size: 0.85rem; margin-top: 1rem;'><a href='/?action=signin' target='_self' style='color: #6366f1; text-decoration: none; font-weight: 500;'>← Back to Sign In</a></div>", unsafe_allow_html=True)
                 
-                <div style="display: flex; justify-content: center; margin-top: 1.5rem; margin-bottom: 0.5rem;">
-                    <div style="display: flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 20px; color: #10b981; font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 500;">
-                        <svg role="img" aria-label="Encryption Padlock" xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                        Encrypted Connection
-                    </div>
-                </div>
-                """
-                st.markdown(signup_footer_html.replace("\n", " "), unsafe_allow_html=True)
-                
-                if register_submitted:
-                    if not new_username or not new_password or not confirm_password:
-                        st.error("All registration fields are required.")
-                    elif len(new_username) < 3:
-                        st.error("Username must be at least 3 characters long.")
-                    elif len(new_password) < 6:
-                        st.error("Password must be at least 6 characters long.")
-                    elif new_password != confirm_password:
-                        st.error("Passwords do not match.")
+                if reset_submitted:
+                    if not forgot_username:
+                        st.error("Please enter your username first.")
+                    elif not security_q:
+                        st.error("Please enter a valid username that has a security question.")
+                    elif not security_ans or not new_pass:
+                        st.error("All recovery fields are required.")
+                    elif len(new_pass) < 6:
+                        st.error("New password must be at least 6 characters long.")
                     else:
-                        with st.spinner("Creating your account..."):
-                            status_code, res_data = api_client.register(new_username, new_password)
-                            if status_code == 201:
-                                st.success("Account registered successfully! Please sign in using the 'Sign In' tab.")
+                        with st.spinner("Verifying answer and updating password..."):
+                            status_code, res_data = api_client.reset_password(forgot_username, security_ans, new_pass)
+                            if status_code == 200:
+                                st.success("Password reset successfully! Redirecting you to sign in...")
+                                st.toast("Password reset successful!", icon="🔐")
+                                # Clear query params to return to sign in
+                                st.query_params.clear()
+                                import time
+                                time.sleep(1.5)
+                                st.rerun()
                             else:
-                                detail = res_data.get("detail", "Registration failed")
-                                st.error(f"Registration failed: {detail}")
-                                
+                                detail = res_data.get("detail", "Failed to reset password")
+                                st.error(detail)
+        else:
+            tab_signin, tab_signup = st.tabs(["Sign In", "Sign Up"])
+            
+            with tab_signin:
+                with st.form("login_form", clear_on_submit=False):
+                    # Centered Lock graphic header inside card
+                    lock_header_html = """
+                    <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 1.5rem;">
+                        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 6px; color: #10b981; font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem;">
+                            <svg role="img" aria-label="Secure Connection Shield" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            Secure Connection
+                        </div>
+                        <h2 style="text-align: center; margin: 0; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.7rem; color: #f8fafc;">Welcome Back</h2>
+                        <p style="text-align: center; margin: 0.3rem 0 0 0; color: #94a3b8; font-size: 0.88rem; font-family: 'Inter', sans-serif;">Sign in to access your RetainIQ dashboard</p>
+                    </div>
+                    """
+                    st.markdown(lock_header_html, unsafe_allow_html=True)
+                    
+                    # Form Fields
+                    st.markdown("<div style='font-family: Inter, sans-serif; font-size: 0.85rem; font-weight: 500; color: #cbd5e1; margin-bottom: 6px;'>Username</div>", unsafe_allow_html=True)
+                    username = st.text_input("Username", value="", placeholder="Enter your username", label_visibility="collapsed", key="login_username")
+                    
+                    st.markdown("<div style='font-family: Inter, sans-serif; font-size: 0.85rem; font-weight: 500; color: #cbd5e1; margin-bottom: 6px; margin-top: 1.2rem;'>Password</div>", unsafe_allow_html=True)
+                    password = st.text_input("Password", type="password", value="", placeholder="Enter your password", label_visibility="collapsed", key="login_password")
+                    
+                    # Columns layout for Remember Me and Forgot Password
+                    c_chk, c_lnk = st.columns([1.1, 0.9])
+                    with c_chk:
+                        remember_me = st.checkbox("Remember Me", value=False, key="login_remember")
+                    with c_lnk:
+                        st.markdown("<div style='text-align: right; font-family: Inter, sans-serif; font-size: 0.85rem; margin-top: 0px;'><a href='/?action=forgot' target='_self' style='color: #6366f1; text-decoration: none; font-weight: 500;'>Forgot Password?</a></div>", unsafe_allow_html=True)
+                    
+                    submitted = st.form_submit_button("Login to Dashboard   →", use_container_width=True)
+                    
+                    # Footer Terms and Encryption status (no SSO button)
+                    footer_html = """
+                    <div style="text-align: center; font-size: 0.78rem; color: #64748b; font-family: 'Inter', sans-serif; margin-top: 2rem; line-height: 1.4;">
+                        By continuing, you agree to our <a href="#" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #94a3b8;">Terms of Service</a> and <a href="#" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #94a3b8;">Privacy Policy</a>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: center; margin-top: 1.5rem; margin-bottom: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 20px; color: #10b981; font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 500;">
+                            <svg role="img" aria-label="Encryption Padlock" xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            Encrypted Connection
+                        </div>
+                    </div>
+                    """
+                    st.markdown(footer_html.replace("\n", " "), unsafe_allow_html=True)
+                    
+                    if submitted:
+                        if not username or not password:
+                            st.error("Username and password are required to sign in.")
+                        else:
+                            with st.spinner("Signing in..."):
+                                status_code, data = api_client.login(username, password)
+                                if status_code == 200:
+                                    st.session_state.jwt_token = data["access_token"]
+                                    st.session_state.current_user = username
+                                    st.toast("Login successful. Welcome back!", icon="👋")
+                                    st.rerun()
+                                else:
+                                    detail = data.get("detail", "Invalid credentials")
+                                    st.error(f"Authentication failed: {detail}")
+                                    
+            with tab_signup:
+                with st.form("signup_form", clear_on_submit=False):
+                    # Centered Sign Up graphic header inside card
+                    signup_header_html = """
+                    <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 1.5rem;">
+                        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 6px; color: #10b981; font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem;">
+                            <svg role="img" aria-label="Secure Connection Shield" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            Secure Connection
+                        </div>
+                        <h2 style="text-align: center; margin: 0; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.7rem; color: #f8fafc;">Create Account</h2>
+                        <p style="text-align: center; margin: 0.3rem 0 0 0; color: #94a3b8; font-size: 0.88rem; font-family: 'Inter', sans-serif;">Register to set up your profile and dashboard</p>
+                    </div>
+                    """
+                    st.markdown(signup_header_html, unsafe_allow_html=True)
+                    
+                    st.markdown("<div style='font-family: Inter, sans-serif; font-size: 0.85rem; font-weight: 500; color: #cbd5e1; margin-bottom: 6px;'>Username</div>", unsafe_allow_html=True)
+                    new_username = st.text_input("Username", value="", placeholder="Choose a username", label_visibility="collapsed", key="signup_username")
+                    
+                    st.markdown("<div style='font-family: Inter, sans-serif; font-size: 0.85rem; font-weight: 500; color: #cbd5e1; margin-bottom: 6px; margin-top: 1.2rem;'>Password</div>", unsafe_allow_html=True)
+                    new_password = st.text_input("Password", type="password", value="", placeholder="Choose a password", label_visibility="collapsed", key="signup_password")
+                    if new_password and len(new_password) < 6:
+                        st.markdown("<div style='color: #f87171; font-size: 0.78rem; margin-top: 6px; margin-bottom: -6px; font-family: Inter, sans-serif; font-weight: 500;'>Password must be at least 6 characters long</div>", unsafe_allow_html=True)
+                    
+                    st.markdown("<div style='font-family: Inter, sans-serif; font-size: 0.85rem; font-weight: 500; color: #cbd5e1; margin-bottom: 6px; margin-top: 1.2rem;'>Confirm Password</div>", unsafe_allow_html=True)
+                    confirm_password = st.text_input("Confirm Password", type="password", value="", placeholder="Confirm your password", label_visibility="collapsed", key="signup_confirm_password")
+                    
+                    # Security Question selection dropdown and Answer input
+                    st.markdown("<div style='font-family: Inter, sans-serif; font-size: 0.85rem; font-weight: 500; color: #cbd5e1; margin-bottom: 6px; margin-top: 1.2rem;'>Security Question</div>", unsafe_allow_html=True)
+                    security_questions = [
+                        "What is your favorite sport?",
+                        "What was the name of your first school?",
+                        "In what city or town were you born?",
+                        "Who is your favorite celebrity?",
+                        "What is your favorite subject?"
+                    ]
+                    new_security_question = st.selectbox("Security Question", options=security_questions, label_visibility="collapsed", key="signup_security_question")
+                    
+                    st.markdown("<div style='font-family: Inter, sans-serif; font-size: 0.85rem; font-weight: 500; color: #cbd5e1; margin-bottom: 6px; margin-top: 1.2rem;'>Security Answer</div>", unsafe_allow_html=True)
+                    new_security_answer = st.text_input("Security Answer", value="", placeholder="Enter your answer", label_visibility="collapsed", key="signup_security_answer")
+                    
+                    # Symmetrical vertical padding spacer instead of checkbox row
+                    st.markdown("<div style='margin-top: 1.5rem;'></div>", unsafe_allow_html=True)
+                    
+                    register_submitted = st.form_submit_button("Register Account   →", use_container_width=True)
+                    
+                    # Bottom Terms and connection badge inside signup tab for perfect height symmetry
+                    signup_footer_html = """
+                    <div style="text-align: center; font-size: 0.78rem; color: #64748b; font-family: 'Inter', sans-serif; margin-top: 1.8rem; line-height: 1.4;">
+                        By continuing, you agree to our <a href="#" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #94a3b8;">Terms of Service</a> and <a href="#" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #94a3b8;">Privacy Policy</a>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: center; margin-top: 1.5rem; margin-bottom: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 20px; color: #10b981; font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 500;">
+                            <svg role="img" aria-label="Encryption Padlock" xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            Encrypted Connection
+                        </div>
+                    </div>
+                    """
+                    st.markdown(signup_footer_html.replace("\n", " "), unsafe_allow_html=True)
+                    
+                    if register_submitted:
+                        if not new_username or not new_password or not confirm_password or not new_security_answer:
+                            st.error("All registration fields are required (including security answer).")
+                        elif len(new_username) < 3:
+                            st.error("Username must be at least 3 characters long.")
+                        elif len(new_password) < 6:
+                            st.error("Password must be at least 6 characters long.")
+                        elif new_password != confirm_password:
+                            st.error("Passwords do not match.")
+                        else:
+                            with st.spinner("Creating your account..."):
+                                status_code, res_data = api_client.register(
+                                    new_username, 
+                                    new_password, 
+                                    new_security_question, 
+                                    new_security_answer
+                                )
+                                if status_code == 201:
+                                    st.success("Account registered successfully! Please sign in using the 'Sign In' tab.")
+                                else:
+                                    detail = res_data.get("detail", "Registration failed")
+                                    st.error(f"Registration failed: {detail}")
+                                    
     st.stop()

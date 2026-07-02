@@ -20,6 +20,14 @@ class UserLogin(BaseModel):
 class UserCreate(BaseModel):
     username: str = Field(..., min_length=3, max_length=50, description="Unique username")
     password: str = Field(..., min_length=6, description="Cleartext password")
+    security_question: str = Field(..., description="Security question chosen by user")
+    security_answer: str = Field(..., description="Security answer provided by user")
+
+
+class PasswordReset(BaseModel):
+    username: str = Field(..., description="Username of the user requesting password reset")
+    security_answer: str = Field(..., description="Answer to their security question")
+    new_password: str = Field(..., min_length=6, description="New password")
 
 
 class UserResponse(BaseModel):
