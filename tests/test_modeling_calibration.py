@@ -43,9 +43,9 @@ def test_compute_ece():
 
 def test_ensemble_aggregation():
     # Verify that CalibratedGBDTEnsemble class can be instantiated and exposes correct APIs
-    ensemble = CalibratedGBDTEnsemble(seed=42, decision_threshold=0.528, calibration_method="isotonic")
+    ensemble = CalibratedGBDTEnsemble(seed=42, decision_threshold=0.15, calibration_method="isotonic")
     assert ensemble.seed == 42
-    assert ensemble.decision_threshold == 0.528
+    assert ensemble.decision_threshold == 0.15
     assert ensemble.calibration_method == "isotonic"
 
 

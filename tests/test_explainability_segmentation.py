@@ -224,7 +224,7 @@ def test_run_segmentation_continuous_only(temp_output_dir, mock_dataset, monkeyp
     assert os.path.exists(results["metrics_path"])
     
     # Verify persona mapping and k-selection outputs are saved (Issue 7 & 8)
-    assert os.path.exists(os.path.join(temp_output_dir, "metrics", "k_selection_analysis.png"))
+    assert os.path.exists(os.path.join(temp_output_dir, "plots", "k_selection_analysis.png"))
     assert os.path.exists(os.path.join(temp_output_dir, "metrics", "kmeans_personas.md"))
     
     # Validate metrics layout

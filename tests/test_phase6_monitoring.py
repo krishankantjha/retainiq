@@ -26,6 +26,7 @@ from app.main import app
 from ml.training.feature_drift import detect_feature_drift
 from ml.training.model_monitor import get_system_health
 import app.services.prediction_service as pred_service
+import app.services.ingestion as ingestion_service
 
 client = TestClient(app)
 
@@ -151,7 +152,7 @@ def test_prediction_logs_appending(tmp_path, monkeypatch):
     FIX: Updated to use the monthly-partitioned filename
     (prediction_logs_YYYY-MM.jsonl) introduced by the MEDIUM-4 log rotation fix.
     """
-    monkeypatch.setattr(pred_service, "artifacts_dir", str(tmp_path))
+    monkeypatch.setattr(ingestion_service, "artifacts_dir", str(tmp_path))
 
     cids = ["C1", "C2"]
     probs = np.array([0.15, 0.82])
