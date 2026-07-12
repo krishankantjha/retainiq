@@ -11,9 +11,20 @@ MODEL_DEFAULTS = {
     "smote": {
         "k_neighbors": 5
     },
-    "decision_threshold": 0.528,
     "pruned_columns": ["binary__has_support"],
     "linear_model_exclusions": ["binary__is_early_stage", "AvgMonthlyCharge"],
+    "segmentation": {
+        "n_clusters": 3,
+        "continuous_features": [
+            "numeric__tenure",
+            "numeric__MonthlyCharges",
+            "numeric__addon_count",
+            "numeric__commitment_score",
+            "numeric__Contract",
+            "numeric__AvgMonthlyCharge",
+            "numeric__num_services"
+        ]
+    },
     "cost_coefficients": {
         "false_negative_cost": 5.0,
         "false_positive_cost": 1.0

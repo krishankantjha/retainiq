@@ -117,6 +117,11 @@ ai-customer-retention-platform/
 │   ├── preprocessing/        # Pandas ETL, cleaning, engineering, and validators
 │   ├── training/             # Ensemble fitters, calibrations, and metrics validations
 │   └── artifacts/            # Serialized models, scalers, and metric assets
+│       ├── artifacts_manifest.json  # Checksum validation signatures
+│       ├── model.pkl         # Serialized Calibrated GBDT Ensemble
+│       ├── pipeline.pkl      # Preprocessing ColumnTransformer
+│       ├── encoders.pkl      # Categorical dictionaries map
+│       └── model_metadata.pkl # Model training inputs and expected features list
 ├── configs/                  # Global YAML settings, features, and model constants
 ├── docker/                   # Nginx reverse proxy configs and docker compose files
 └── data/                     # Ignored directory hosting raw and clean datasets
@@ -295,7 +300,7 @@ python -m pytest
 * **Logging Filter (Redaction)**:
   An active regex-filter (`app/core/logging_config.py`) checks stdout streams and replaces credentials, charges, or user metrics with `[REDACTED]` to prevent printing sensitive information in logs.
 * **Cryptography Integrity**:
-  During server boot, the application reads the SHA-256 hashes of `pipeline.pkl` and `model_ensemble.pkl` inside `manifest.json`. If a mismatch is detected, startup aborts with an `ArtifactValidationError` to prevent loading corrupted model files.
+  During server boot, the application reads the SHA-256 hashes of `pipeline.pkl`, `model.pkl`, `encoders.pkl`, and `model_metadata.pkl` inside `artifacts_manifest.json`. If a mismatch is detected, startup aborts with an `ArtifactValidationError` to prevent loading corrupted model files.
 * **Thread-Safe Memory Sweepers**:
   API requests eviction loops clear old timestamps periodically (every 500 requests) inside the sliding-window rate-limiting middleware to prevent memory growth leaks in production.
 * **SQLite Concurrency Lock Protection**:

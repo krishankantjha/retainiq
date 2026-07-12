@@ -192,7 +192,7 @@ server {
 To protect public endpoints, the backend uses a sliding-window rate limiter.
 - **Upload & Explain Route Limit**: 60 requests per minute per client key (token or IP).
 - **Auth Login Route Limit**: 10 requests per minute per client key (prevents brute-force credential attacks).
-- **Target Paths**: `/api/v1/auth/login`, `/api/v1/predict/upload`, `/api/v1/predict/customers/{customer_id}/explain`.
+- **Target Paths**: `/api/v1/auth/login`, `/api/v1/upload`, `/api/v1/customers/{customer_id}/explain`.
 - **Status Response**: Returns `429 Too Many Requests` with a JSON payload: `{"detail": "Too many requests. Please try again later."}`.
 - **Stale Key Eviction**: The in-memory rate limiter database is pruned every 500 requests to prevent memory growth.
 
@@ -207,7 +207,7 @@ The platform implements a strict SHA-256 integrity verification system. If model
 # Run retraining and regenerate artifact integrity signatures
 retrain:
 	python ml/training/train.py
-	python ml/segmentation/autoencoder.py
+	python ml/segmentation/train_autoencoder.py
 	python ml/segmentation/kmeans.py
 	python scripts/generate_manifest.py
 ```
