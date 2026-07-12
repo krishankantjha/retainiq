@@ -240,7 +240,9 @@ def run_calibration(train_path: str, test_path: str, calibration_dir: str) -> di
         plt.legend(loc="lower right")
         plt.grid(True, linestyle="--", alpha=0.5)
         
-        plot_path = os.path.join(calibration_dir, "calibration_comparison.png")
+        plots_dir = os.path.join(os.path.dirname(calibration_dir), "plots")
+        os.makedirs(plots_dir, exist_ok=True)
+        plot_path = os.path.join(plots_dir, "calibration_curve.png")
         plt.savefig(plot_path, bbox_inches="tight")
         logger.info(f"Saved reliability comparison plot to: {plot_path}")
     except Exception as e:

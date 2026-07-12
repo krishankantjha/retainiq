@@ -38,18 +38,18 @@
         }
     },
     "Locked_Threshold_Evaluation": {
-        "Threshold": 0.528,
+        "Threshold": 0.15,
         "Test_Evaluation": {
-            "Threshold": 0.528,
-            "Accuracy": 0.7998580553584103,
-            "Precision": 0.6678832116788321,
-            "Recall": 0.4893048128342246,
-            "F1-Score": 0.5648148148148148,
-            "TN": 944,
-            "FP": 91,
-            "FN": 191,
-            "TP": 183,
-            "Total_Cost": 1046.0
+            "Threshold": 0.15,
+            "Accuracy": 0.6756564939673527,
+            "Precision": 0.44503311258278144,
+            "Recall": 0.8983957219251337,
+            "F1-Score": 0.5952170062001771,
+            "TN": 616,
+            "FP": 419,
+            "FN": 38,
+            "TP": 336,
+            "Total_Cost": 609.0
         }
     },
     "Threshold_Sweep_Grid": [

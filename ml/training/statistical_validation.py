@@ -53,7 +53,9 @@ def run_statistical_validation(train_path: str, test_path: str, model_path: str,
     
     # Retrieve parameters from configs
     seed = config_loader.model.get("random_seed", 42)
-    threshold = config_loader.model.get("decision_threshold", 0.528)
+    threshold = config_loader.model.get("decision_threshold")
+    if threshold is None:
+        raise ValueError("Configuration Error: 'decision_threshold' is missing from the model configuration.")
     pruned_cols = config_loader.model.get("pruned_columns", ["binary__has_support"])
     linear_exclusions = config_loader.model.get("linear_model_exclusions", ["binary__is_early_stage", "AvgMonthlyCharge"])
     k_neighbors = config_loader.model.get("smote", {}).get("k_neighbors", 5)

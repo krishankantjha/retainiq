@@ -35,7 +35,7 @@ class CalibratedGBDTEnsemble(BaseEstimator, ClassifierMixin):
     """
     __module__ = "ml.training.ensemble"
 
-    def __init__(self, seed: int = 42, decision_threshold: float = 0.528, calibration_method: str = "isotonic", reconstruct_clean: bool = True):
+    def __init__(self, seed: int = 42, decision_threshold: float = 0.15, calibration_method: str = "isotonic", reconstruct_clean: bool = True):
         self.seed = seed
         self.decision_threshold = decision_threshold
         self.calibration_method = calibration_method
@@ -264,7 +264,9 @@ def train_and_serialize_ensemble(train_path: str, test_path: str, models_dir: st
     X_test_aligned = X_test[features]
     
     seed = config_loader.model.get("random_seed", 42)
-    threshold = config_loader.model.get("decision_threshold", 0.528)
+    threshold = config_loader.model.get("decision_threshold")
+    if threshold is None:
+        raise ValueError("Configuration Error: 'decision_threshold' is missing from the model configuration.")
     
     ensemble = CalibratedGBDTEnsemble(seed=seed, decision_threshold=threshold, calibration_method="isotonic")
     ensemble.fit(X_train_aligned, y_train)

@@ -109,7 +109,9 @@ def validate_k_selection(X: pd.DataFrame, max_k: int = 6, output_dir: str = None
     ax2.grid(True)
     
     plt.tight_layout()
-    analysis_path = os.path.join(output_dir, "metrics", "k_selection_analysis.png")
+    plots_dir = os.path.join(output_dir, "plots")
+    os.makedirs(plots_dir, exist_ok=True)
+    analysis_path = os.path.join(plots_dir, "k_selection_analysis.png")
     plt.savefig(analysis_path, dpi=150)
     plt.close()
     logger.info(f"Saved Elbow/Silhouette K validation plots to: {analysis_path}")
@@ -149,14 +151,14 @@ This document outlines the customer behavioral segments identified via K-Means++
             "action": "Trigger Auto-Pay conversion and cross-sell technical security add-ons to improve retention friction."
         },
         1: {
-            "name": "Cluster 1: High-Value Premium Cohort",
-            "desc": "Long-tenure customers with high ecosystem service counts and high monthly billing rates. This is your most valuable premium group.",
-            "action": "Ensure high-priority VIP customer support. Check fiber router performance and offer loyalty credits proactively."
-        },
-        2: {
-            "name": "Cluster 2: New Churn-Risk Users",
+            "name": "Cluster 1: New Churn-Risk Users",
             "desc": "Short-tenure customers with high initial monthly charges, short contract types, and low ecosystem subscription counts. This represents your highest churn-risk group.",
             "action": "Prioritize direct welcome onboarding check-ins, rate audits, and transition them to long-term contract lock-in campaigns."
+        },
+        2: {
+            "name": "Cluster 2: High-Value Premium Cohort",
+            "desc": "Long-tenure customers with high ecosystem service counts and high monthly billing rates. This is your most valuable premium group.",
+            "action": "Ensure high-priority VIP customer support. Check fiber router performance and offer loyalty credits proactively."
         }
     }
     
@@ -214,17 +216,11 @@ def run_segmentation(train_path: str, output_dir: str, n_clusters: int = 3, rand
     # 1. Reconstruct natural data splits (no SMOTE)
     X_natural_all, y_natural = reconstruct_natural_features(random_seed)
     
-    # 2. Extract continuous features from config (Option A)
-    seg_cfg = config_loader.model.get("segmentation", {})
-    cont_cols = seg_cfg.get("continuous_features", [
-        "numeric__tenure",
-        "numeric__MonthlyCharges",
-        "numeric__addon_count",
-        "numeric__commitment_score",
-        "numeric__Contract",
-        "numeric__AvgMonthlyCharge",
-        "numeric__num_services"
-    ])
+    # 2. Extract continuous features from config
+    seg_cfg = config_loader.model.get("segmentation")
+    if seg_cfg is None or "continuous_features" not in seg_cfg:
+        raise ValueError("Configuration Error: 'segmentation.continuous_features' is missing from the model configuration.")
+    cont_cols = seg_cfg["continuous_features"]
     
     # Keep only continuous variables to satisfy Euclidean distance assumptions
     X_continuous = X_natural_all[cont_cols]

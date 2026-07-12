@@ -1,7 +1,7 @@
 """
 Confusion Matrix Export Module.
 Generates the confusion matrix on the holdout test set using the calibrated GBDT ensemble
-at the operational threshold (0.528) and exports counts to JSON.
+at the operational threshold (0.15) and exports counts to JSON.
 """
 
 import os
@@ -61,8 +61,10 @@ def export_confusion_matrix(test_path: str, model_path: str, output_dir: str) ->
         raise ValueError(f"Feature schema mismatch. Expected features: {list(xgb_features)}. Missing: {missing_cols}")
     X_test_aligned = X_test[xgb_features]
 
-    # Generate predictions using decision threshold (0.528)
-    threshold = config_loader.model.get("decision_threshold", 0.528)
+    # Generate predictions using decision threshold
+    threshold = config_loader.model.get("decision_threshold")
+    if threshold is None:
+        raise ValueError("Configuration Error: 'decision_threshold' is missing from the model configuration.")
     logger.info(f"Using operational threshold: {threshold:.3f}")
 
     probs = ensemble.predict_proba(X_test_aligned)[:, 1]

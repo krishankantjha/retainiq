@@ -72,9 +72,14 @@ def evaluate_model(test_features_path: str, artifacts_dir: str) -> None:
     # Align columns to match the features used in training
     X_test_aligned = X_test[metadata["feature_names_in"]]
 
-    # Run prediction using the optimal business decision threshold of 0.25
+    # Load threshold dynamically from configuration
+    threshold = config_loader.model.get("decision_threshold")
+    if threshold is None:
+        raise ValueError("decision_threshold is missing from configuration")
+
+    # Run prediction using the configured business decision threshold
     y_prob = model.predict_proba(X_test_aligned)[:, 1]
-    y_pred = (y_prob >= 0.25).astype(int)
+    y_pred = (y_prob >= threshold).astype(int)
 
     # Calculate metrics
     auc_roc = roc_auc_score(y_test, y_prob)
@@ -88,6 +93,10 @@ def evaluate_model(test_features_path: str, artifacts_dir: str) -> None:
     print("\n=== Model Classification Report ===")
     print(report)
 
+    # Ensure plots directory exists
+    plots_dir = os.path.join(artifacts_dir, "plots")
+    os.makedirs(plots_dir, exist_ok=True)
+
     # 1. Confusion Matrix Plot
     plt.figure(figsize=(6, 5))
     cm = confusion_matrix(y_test, y_pred)
@@ -95,7 +104,7 @@ def evaluate_model(test_features_path: str, artifacts_dir: str) -> None:
     disp.plot(cmap="Blues", values_format="d")
     plt.title("Confusion Matrix")
     plt.tight_layout()
-    cm_plot_path = os.path.join(artifacts_dir, "confusion_matrix.png")
+    cm_plot_path = os.path.join(plots_dir, "confusion_matrix.png")
     plt.savefig(cm_plot_path)
     plt.close()
     logger.info(f"Saved confusion matrix plot to: {cm_plot_path}")
@@ -112,7 +121,7 @@ def evaluate_model(test_features_path: str, artifacts_dir: str) -> None:
     plt.title("Receiver Operating Characteristic (ROC) Curve")
     plt.legend(loc="lower right")
     plt.tight_layout()
-    roc_plot_path = os.path.join(artifacts_dir, "roc_curve.png")
+    roc_plot_path = os.path.join(plots_dir, "roc_curve.png")
     plt.savefig(roc_plot_path)
     plt.close()
     logger.info(f"Saved ROC curve plot to: {roc_plot_path}")
@@ -128,7 +137,7 @@ def evaluate_model(test_features_path: str, artifacts_dir: str) -> None:
     plt.title("Precision-Recall Curve")
     plt.legend(loc="lower left")
     plt.tight_layout()
-    pr_plot_path = os.path.join(artifacts_dir, "precision_recall_curve.png")
+    pr_plot_path = os.path.join(plots_dir, "precision_recall_curve.png")
     plt.savefig(pr_plot_path)
     plt.close()
     logger.info(f"Saved Precision-Recall curve plot to: {pr_plot_path}")
@@ -147,7 +156,7 @@ def evaluate_model(test_features_path: str, artifacts_dir: str) -> None:
     shap.summary_plot(shap_values, X_test_aligned, show=False)
     plt.title("SHAP Feature Importance Summary", fontsize=12, pad=15)
     plt.tight_layout()
-    shap_plot_path = os.path.join(artifacts_dir, "shap_summary_plot.png")
+    shap_plot_path = os.path.join(plots_dir, "shap_summary.png")
     plt.savefig(shap_plot_path)
     plt.close()
     logger.info(f"Saved SHAP summary plot to: {shap_plot_path}")

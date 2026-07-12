@@ -113,7 +113,9 @@ def run_benchmarks(train_path: str, test_path: str, metrics_dir: str) -> pd.Data
     X_test_aligned = X_test[features]
     
     seed = config_loader.model.get("random_seed", 42)
-    threshold = config_loader.model.get("decision_threshold", 0.30)
+    threshold = config_loader.model.get("decision_threshold")
+    if threshold is None:
+        raise ValueError("Configuration Error: 'decision_threshold' is missing from the model configuration.")
     
     # Define the model configurations with parallelization enabled where supported
     models = {

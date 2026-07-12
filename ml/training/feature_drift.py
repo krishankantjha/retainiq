@@ -114,17 +114,11 @@ def detect_feature_drift(X_inference: pd.DataFrame, random_seed: int = 42) -> di
         
     df_train = pd.read_csv(train_csv)
     
-    # 2. Extract continuous columns list from config (for primary KS checks)
-    seg_cfg = config_loader.model.get("segmentation", {})
-    cont_cols = seg_cfg.get("continuous_features", [
-        "numeric__tenure",
-        "numeric__MonthlyCharges",
-        "numeric__addon_count",
-        "numeric__commitment_score",
-        "numeric__Contract",
-        "numeric__AvgMonthlyCharge",
-        "numeric__num_services"
-    ])
+    # 2. Extract continuous columns list from config
+    seg_cfg = config_loader.model.get("segmentation")
+    if seg_cfg is None or "continuous_features" not in seg_cfg:
+        raise ValueError("Configuration Error: 'segmentation.continuous_features' is missing from the model configuration.")
+    cont_cols = seg_cfg["continuous_features"]
 
     # Warn when expected post-pipeline numerical columns are absent from X_inference
     missing_from_inference = [col for col in cont_cols if col not in X_inference.columns]

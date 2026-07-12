@@ -144,7 +144,9 @@ def optimize_threshold(test_csv: str, model_path: str, output_dir: str) -> dict:
     test_baseline_cost = float(test_n_churners * c_fn)
     
     # Evaluate at key points
-    locked_threshold = config_loader.model.get("decision_threshold", 0.528)
+    locked_threshold = config_loader.model.get("decision_threshold")
+    if locked_threshold is None:
+        raise ValueError("Configuration Error: 'decision_threshold' is missing from the model configuration.")
     
     optimal_cost_metrics = evaluate_threshold_metrics(probs_test, y_test, best_cost_threshold)
     optimal_f1_metrics = evaluate_threshold_metrics(probs_test, y_test, best_f1_threshold)
@@ -215,7 +217,9 @@ def optimize_threshold(test_csv: str, model_path: str, output_dir: str) -> dict:
         plt.legend(loc="lower left", fontsize=9)
         plt.grid(True, linestyle="--", alpha=0.5)
         
-        plot_path = os.path.join(output_dir, "threshold_optimization.png")
+        plots_dir = os.path.join(os.path.dirname(output_dir), "plots")
+        os.makedirs(plots_dir, exist_ok=True)
+        plot_path = os.path.join(plots_dir, "threshold_sweep.png")
         plt.savefig(plot_path, bbox_inches="tight")
         logger.info(f"Saved threshold optimization curves plot to: {plot_path}")
     except Exception as e:

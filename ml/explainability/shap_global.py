@@ -63,12 +63,16 @@ def compute_global_shap(train_path: str, model_path: str, output_dir: str) -> di
     mean_abs_shap = np.abs(shap_values.values).mean(axis=0)
     global_importance = dict(zip(xgb_features, [float(v) for v in mean_abs_shap]))
     
+    # Ensure plots directory exists
+    plots_dir = os.path.join(output_dir, "plots")
+    os.makedirs(plots_dir, exist_ok=True)
+
     # 1. Generate and save summary bar plot
     plt.figure(figsize=(10, 6))
     shap.summary_plot(shap_values, X_train_aligned, plot_type="bar", show=False)
     plt.title("Global Feature Importance (Mean |SHAP Value|)")
     plt.tight_layout()
-    summary_path = os.path.join(output_dir, "shap_summary_plot.png")
+    summary_path = os.path.join(plots_dir, "shap_summary.png")
     plt.savefig(summary_path, dpi=150)
     plt.close()
     logger.info(f"Saved global SHAP summary plot to: {summary_path}")
@@ -78,7 +82,7 @@ def compute_global_shap(train_path: str, model_path: str, output_dir: str) -> di
     shap.plots.beeswarm(shap_values, max_display=15, show=False)
     plt.title("Feature Impact on Churn Prediction (Beeswarm Plot)")
     plt.tight_layout()
-    beeswarm_path = os.path.join(output_dir, "shap_beeswarm_plot.png")
+    beeswarm_path = os.path.join(plots_dir, "shap_beeswarm.png")
     plt.savefig(beeswarm_path, dpi=150)
     plt.close()
     logger.info(f"Saved global SHAP beeswarm plot to: {beeswarm_path}")
