@@ -27,4 +27,10 @@ data/processed/*.csv
 # Local Databases
 *.db
 *.sqlite
+
+# Logs and Caches
+backend/logs/
+*.log
+*.log.*
+
 
