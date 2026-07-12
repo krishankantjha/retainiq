@@ -59,6 +59,13 @@ st.markdown(f"""
         font-family: 'Inter', sans-serif !important;
     }}
 
+    /* Shift main content block down to clear the sticky top navbar */
+    .block-container {{
+        padding-top: 6.0rem !important;
+        padding-left: 2.5rem !important;
+        padding-right: 2.5rem !important;
+    }}
+
     /* Title blocks */
     .main-title {{
         font-family: 'Outfit', sans-serif;
@@ -76,6 +83,183 @@ st.markdown(f"""
         font-size: 1.05rem;
         margin-bottom: 2rem;
         line-height: 1.5;
+    }}
+
+    /* Sticky Top Navbar styling */
+    .sticky-navbar {{
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 70px;
+        background: rgba(3, 0, 20, 0.85) !important;
+        backdrop-filter: blur(20px) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 0 2rem 0 18rem !important; /* Indents main header to clear sidebar */
+        z-index: 999999 !important;
+    }}
+    
+    /* Handle sidebar collapse state adjustment for header */
+    @media (max-width: 768px) {{
+        .sticky-navbar {{
+            padding-left: 2rem !important;
+        }}
+    }}
+    
+    .navbar-left {{
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+    }}
+    
+    .hamburger-menu {{
+        font-size: 1.2rem;
+        color: #64748b;
+        cursor: pointer;
+    }}
+    
+    .navbar-logo {{
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: #ffffff;
+    }}
+    
+    .navbar-center {{
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        max-width: 450px;
+        margin: 0 2rem;
+    }}
+    
+    .search-container {{
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-items: center;
+    }}
+    
+    .search-icon {{
+        position: absolute;
+        left: 12px;
+        color: #475569;
+        font-size: 0.85rem;
+    }}
+    
+    .search-input {{
+        width: 100% !important;
+        background-color: rgba(15, 23, 42, 0.5) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 9999px !important;
+        padding: 0.45rem 5.0rem 0.45rem 2.2rem !important;
+        color: #f8fafc !important;
+        font-size: 0.82rem !important;
+    }}
+    .search-input:focus {{
+        border-color: {primary_color_hex} !important;
+        outline: none !important;
+    }}
+    
+    .search-badge {{
+        position: absolute;
+        right: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 4px;
+        padding: 1px 6px;
+        font-size: 0.68rem;
+        color: #64748b;
+    }}
+    
+    .navbar-right {{
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+    }}
+    
+    .nav-icon {{
+        font-size: 1.05rem;
+        color: #94a3b8;
+        cursor: pointer;
+        transition: color 0.15s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }}
+    .nav-icon:hover {{
+        color: #ffffff;
+    }}
+    
+    .notification-container {{
+        position: relative;
+        display: flex;
+        align-items: center;
+    }}
+    
+    .notification-badge {{
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        background: #ef4444;
+        color: #ffffff;
+        font-size: 0.65rem;
+        font-weight: 700;
+        border-radius: 9999px;
+        padding: 1px 4px;
+        min-width: 14px;
+        text-align: center;
+    }}
+    
+    .navbar-profile {{
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 9999px;
+        padding: 4px 10px 4px 4px;
+        cursor: pointer;
+    }}
+    
+    .profile-avatar {{
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1 0%, #a78bfa 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #ffffff;
+        font-size: 0.72rem;
+    }}
+    
+    .profile-info {{
+        display: flex;
+        flex-direction: column;
+    }}
+    
+    .profile-name {{
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #f8fafc;
+        line-height: 1.1;
+    }}
+    
+    .profile-email {{
+        font-size: 0.65rem;
+        color: #475569;
+        line-height: 1.1;
+    }}
+    
+    .profile-arrow {{
+        font-size: 0.55rem;
+        color: #475569;
+        margin-left: 2px;
     }}
 
     /* Glassmorphism containers and cards */
@@ -115,46 +299,57 @@ st.markdown(f"""
 
     /* Sidebar glass effect and overrides */
     section[data-testid="stSidebar"] {{
-        background-color: rgba(10, 11, 16, 0.8) !important;
+        background-color: #090a10 !important;
         border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
         backdrop-filter: blur(20px) !important;
+        width: 270px !important;
+    }}
+
+    /* Sidebar Category Header classes */
+    .sidebar-group-header {{
+        font-size: 0.68rem !important;
+        font-weight: 700 !important;
+        color: #475569 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.08em !important;
+        margin: 1.4rem 0.5rem 0.5rem 0.5rem !important;
+        font-family: 'Inter', sans-serif !important;
+    }}
+
+    /* Sidebar Button customization targeting Streamlit native elements */
+    section[data-testid="stSidebar"] button {{
+        text-align: left !important;
+        border: none !important;
+        border-radius: 8px !important;
+        justify-content: flex-start !important;
+        padding: 0.5rem 0.8rem !important;
+        font-size: 0.85rem !important;
+        font-family: 'Inter', sans-serif !important;
+        transition: all 0.15s ease-in-out !important;
+        margin-bottom: 2px !important;
     }}
     
-    /* Navigation radio button makeover */
-    div[data-testid="stSidebar"] div[data-testid="stRadio"] > div {{
-        display: flex !important;
-        flex-direction: column !important;
-    }}
-    div[data-testid="stSidebar"] div[data-testid="stRadio"] label {{
-        background: rgba(255, 255, 255, 0.02) !important;
-        border: 1px solid rgba(255, 255, 255, 0.04) !important;
-        border-radius: 8px !important;
-        padding: 0.6rem 0.9rem !important;
-        color: #cbd5e1 !important;
-        margin-bottom: 0.4rem !important;
-        transition: all 0.2s ease-in-out !important;
-        cursor: pointer !important;
-        display: flex !important;
-        align-items: center !important;
-    }}
-    div[data-testid="stSidebar"] div[data-testid="stRadio"] label:hover {{
-        background: rgba(99, 102, 241, 0.12) !important;
-        border-color: rgba(99, 102, 241, 0.25) !important;
-        color: #ffffff !important;
-    }}
-    div[data-testid="stSidebar"] div[data-testid="stRadio"] label[data-checked="true"] {{
+    /* Styled Active (Primary) Button */
+    section[data-testid="stSidebar"] button[kind="primary"] {{
         background: linear-gradient(135deg, rgba(99, 102, 241, 0.25) 0%, rgba(99, 102, 241, 0.1) 100%) !important;
-        border-color: {primary_color_hex} !important;
+        border: 1px solid {primary_color_hex} !important;
         color: #ffffff !important;
         font-weight: 600 !important;
         box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15) !important;
     }}
-    /* Hide the default radio circle inputs */
-    div[data-testid="stSidebar"] div[data-testid="stRadio"] label div:first-child {{
-        display: none !important;
+    
+    /* Styled Inactive (Secondary) Button */
+    section[data-testid="stSidebar"] button[kind="secondary"] {{
+        background: transparent !important;
+        color: #cbd5e1 !important;
+        border: none !important;
     }}
-    div[data-testid="stSidebar"] div[data-testid="stRadio"] label div[data-testid="stMarkdownContainer"] {{
-        margin-left: 0 !important;
+    
+    /* Secondary Hover states */
+    section[data-testid="stSidebar"] button[kind="secondary"]:hover {{
+        background: rgba(99, 102, 241, 0.1) !important;
+        color: #ffffff !important;
+        border: none !important;
     }}
 
     /* Global inputs and selectboxes */
@@ -269,11 +464,14 @@ st.markdown(f"""
 </style>
 """, unsafe_allow_html=True)
 
+
 # Initialize session state variables
 if "jwt_token" not in st.session_state:
     st.session_state.jwt_token = None
 if "current_user" not in st.session_state:
     st.session_state.current_user = None
+if "current_page" not in st.session_state:
+    st.session_state.current_page = "📊 Dashboard"
 
 def logout():
     st.session_state.jwt_token = None
@@ -334,30 +532,89 @@ if st.session_state.jwt_token is None:
     st.stop()
 
 # --- Authenticated App Context ---
+# Custom Top Sticky Navbar
+st.markdown("""
+<div class="sticky-navbar">
+    <div class="navbar-left">
+        <span class="hamburger-menu">☰</span>
+        <span class="navbar-logo">Retain<span style="color:#6366f1;">IQ</span></span>
+    </div>
+    <div class="navbar-center">
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" placeholder="Search metrics, segments, customers...">
+            <span class="search-badge">Ctrl + K</span>
+        </div>
+    </div>
+    <div class="navbar-right">
+        <span class="nav-icon" title="Toggle Dark Mode">🌙</span>
+        <div class="notification-container" title="Notifications">
+            <span class="nav-icon">🔔</span>
+            <span class="notification-badge">3</span>
+        </div>
+        <span class="nav-icon" title="Help & Documentation">❓</span>
+        <div class="navbar-profile">
+            <div class="profile-avatar">AD</div>
+            <div class="profile-info">
+                <span class="profile-name">Admin User</span>
+                <span class="profile-email">admin@retainiq.com</span>
+            </div>
+            <span class="profile-arrow">▼</span>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
 # Sidebar Navigation
 with st.sidebar:
-    st.markdown("<div style='margin-bottom:1rem;'><span style='font-size: 1.5rem; font-weight: 800; font-family: Outfit; color: #ffffff;'>Retain<span style='color:#6366f1;'>IQ</span></span></div>", unsafe_allow_html=True)
+    st.markdown("<div style='margin-bottom:1.5rem;'><span style='font-size: 1.5rem; font-weight: 800; font-family: Outfit; color: #ffffff;'>Retain<span style='color:#6366f1;'>IQ</span></span></div>", unsafe_allow_html=True)
     
-    page = st.radio(
-        "Navigation", 
-        [
-            "📊 Dashboard", 
-            "🔍 Customer Explorer", 
-            "🔮 Counterfactual Simulator", 
-            "📈 Analytics", 
-            "🌍 Explainability", 
-            "🧩 Customer Segments", 
-            "📤 Upload Dataset", 
-            "🩺 Model Diagnostics", 
-            "🚨 Drift Detection", 
-            "⚙️ Settings"
-        ],
-        label_visibility="collapsed"
-    )
-    
-    # Styled Admin Profile Card
+    # 1. ANALYTICS Section
+    st.markdown("<div class='sidebar-group-header'>ANALYTICS</div>", unsafe_allow_html=True)
+    analytics_pages = [
+        ("📊 Dashboard", "📊 Dashboard"),
+        ("🔍 Customer Explorer", "🔍 Customer Explorer"),
+        ("🔮 Counterfactual Simulator", "🔮 Counterfactual Simulator"),
+        ("📈 Analytics", "📈 Analytics"),
+        ("🌍 Explainability", "🌍 Explainability")
+    ]
+    for label, page_val in analytics_pages:
+        is_active = (st.session_state.current_page == page_val)
+        btn_type = "primary" if is_active else "secondary"
+        if st.button(label, key=f"nav_{page_val}", type=btn_type, use_container_width=True):
+            st.session_state.current_page = page_val
+            st.rerun()
+            
+    # 2. DATA & MODELS Section
+    st.markdown("<div class='sidebar-group-header'>DATA & MODELS</div>", unsafe_allow_html=True)
+    data_pages = [
+        ("🧩 Customer Segments", "🧩 Customer Segments"),
+        ("📤 Upload Dataset", "📤 Upload Dataset"),
+        ("🩺 Model Diagnostics", "🩺 Model Diagnostics"),
+        ("🚨 Drift Detection", "🚨 Drift Detection")
+    ]
+    for label, page_val in data_pages:
+        is_active = (st.session_state.current_page == page_val)
+        btn_type = "primary" if is_active else "secondary"
+        if st.button(label, key=f"nav_{page_val}", type=btn_type, use_container_width=True):
+            st.session_state.current_page = page_val
+            st.rerun()
+            
+    # 3. CONFIGURATION Section
+    st.markdown("<div class='sidebar-group-header'>CONFIGURATION</div>", unsafe_allow_html=True)
+    config_pages = [
+        ("⚙️ Settings", "⚙️ Settings")
+    ]
+    for label, page_val in config_pages:
+        is_active = (st.session_state.current_page == page_val)
+        btn_type = "primary" if is_active else "secondary"
+        if st.button(label, key=f"nav_{page_val}", type=btn_type, use_container_width=True):
+            st.session_state.current_page = page_val
+            st.rerun()
+            
+    # Styled Admin Profile Card (aligned with the mockup)
     st.markdown("""
-    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 0.8rem; margin-top: 3rem; display: flex; align-items: center; gap: 10px;">
+    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 0.8rem; margin-top: 2rem; display: flex; align-items: center; gap: 10px;">
         <div style="width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #6366f1 0%, #a78bfa 100%); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #ffffff; font-size: 0.82rem; font-family: 'Outfit';">
             AD
         </div>
@@ -365,12 +622,15 @@ with st.sidebar:
             <div style="font-weight: 700; font-size: 0.82rem; color: #f8fafc; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Admin User</div>
             <div style="font-size: 0.7rem; color: #94a3b8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">admin@retainiq.com</div>
         </div>
+        <div style="color: #64748b; font-size: 0.95rem; cursor: pointer;">⋮</div>
     </div>
     """, unsafe_allow_html=True)
     
     st.markdown("<div style='margin-top:0.8rem;'></div>", unsafe_allow_html=True)
-    if st.button("Log Out", use_container_width=True, type="secondary"):
+    if st.button("Log Out", use_container_width=True, type="secondary", icon="🚪"):
         logout()
+
+page = st.session_state.current_page
 
 # Header Section
 st.markdown("<div class='main-title'>RetainIQ Churn Portal</div>", unsafe_allow_html=True)
