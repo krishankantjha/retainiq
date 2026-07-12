@@ -150,7 +150,7 @@ def get_diagnostics_metadata(
     """
     import os
     import json
-    import hashlib
+    from app.core.security import calculate_file_sha256
     
     # Resolve absolute path to diagnostics_metadata.json relative to backend project root
     PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
@@ -160,12 +160,8 @@ def get_diagnostics_metadata(
     # Compute active model's SHA-256
     model_sha256 = ""
     if os.path.exists(model_path):
-        sha256 = hashlib.sha256()
         try:
-            with open(model_path, "rb") as f:
-                while chunk := f.read(8192):
-                    sha256.update(chunk)
-            model_sha256 = sha256.hexdigest()
+            model_sha256 = calculate_file_sha256(model_path)
         except Exception:
             pass
             

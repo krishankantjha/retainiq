@@ -40,15 +40,15 @@ class ArtifactValidationError(ValueError):
     pass
 
 
-def verify_file_hash(filepath: str, expected_hash: str) -> None:
+def calculate_file_sha256(filepath: str) -> str:
     """
-    Computes the SHA-256 checksum of a file and raises ArtifactValidationError if there is a mismatch.
+    Computes the SHA-256 checksum of a file.
     """
     import hashlib
     import os
     
     if not os.path.exists(filepath):
-        raise FileNotFoundError(f"Critical artifact file not found: {filepath}")
+        raise FileNotFoundError(f"Critical file not found for hash computation: {filepath}")
         
     sha256 = hashlib.sha256()
     try:
@@ -56,9 +56,21 @@ def verify_file_hash(filepath: str, expected_hash: str) -> None:
             while chunk := f.read(8192):
                 sha256.update(chunk)
     except Exception as e:
-        raise ArtifactValidationError(f"Failed to read file for hash computation at {filepath}: {e}")
+        raise OSError(f"Failed to read file for hash computation at {filepath}: {e}")
         
-    actual_hash = sha256.hexdigest()
+    return sha256.hexdigest()
+
+
+def verify_file_hash(filepath: str, expected_hash: str) -> None:
+    """
+    Computes the SHA-256 checksum of a file and raises ArtifactValidationError if there is a mismatch.
+    """
+    import os
+    try:
+        actual_hash = calculate_file_sha256(filepath)
+    except (FileNotFoundError, OSError) as e:
+        raise ArtifactValidationError(f"Failed to compute file hash: {e}")
+        
     if actual_hash != expected_hash:
         raise ArtifactValidationError(
             f"Artifact integrity check failed for file: {os.path.basename(filepath)}. "

@@ -17,11 +17,11 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
-from ml.preprocessing.clean import fix_whitespace_blanks, fix_total_charges, drop_duplicates
 from ml.preprocessing.engineer import engineer_features
 from configs.dataset_config import config_loader
 from ml.preprocessing.validator import DataValidator
 from app.core.security import verify_file_hash, ArtifactValidationError
+from app.services.ingestion import clean_uploaded_data, log_prediction_events
 
 logger = logging.getLogger("backend.app.services.prediction_service")
 
@@ -145,80 +145,7 @@ def get_autoencoder():
     return _autoencoder
 
 
-def log_prediction_events(customer_ids: List[str], y_probs: np.ndarray, is_high_risks: np.ndarray, cluster_labels: np.ndarray):
-    """
-    Appends predictions audit trail to monthly-partitioned JSONL files.
 
-    FIX MEDIUM-4: Files are rotated monthly (prediction_logs_YYYY-MM.jsonl)
-    to prevent a single file growing unboundedly in production.
-    """
-    import json
-    from datetime import datetime
-    metrics_dir = os.path.join(artifacts_dir, "metrics")
-    os.makedirs(metrics_dir, exist_ok=True)
-
-    # Monthly rotation: each calendar month gets its own file
-    now = datetime.utcnow()
-    month_str = now.strftime("%Y-%m")
-    log_path = os.path.join(metrics_dir, f"prediction_logs_{month_str}.jsonl")
-
-    timestamp = now.isoformat() + "Z"
-
-    try:
-        with open(log_path, "a", encoding="utf-8") as f:
-            for i, cid in enumerate(customer_ids):
-                record = {
-                    "timestamp": timestamp,
-                    "customer_id": str(cid),
-                    "churn_probability": float(y_probs[i]),
-                    "is_high_risk": bool(is_high_risks[i]),
-                    "cluster": int(cluster_labels[i])
-                }
-                f.write(json.dumps(record) + "\n")
-        logger.info(f"Successfully logged {len(customer_ids)} predictions to audit trail: {log_path}")
-    except Exception as e:
-        logger.error(f"Failed to write prediction logs to audit trail: {e}")
-
-
-def clean_uploaded_data(df: pd.DataFrame) -> pd.DataFrame:
-    """Applies basic data cleaning matching the ML data cleaning steps."""
-    logger.info("Cleaning uploaded dataframe...")
-    df_clean = df.copy()
-    
-    # Standardize columns casing to match expected
-    col_mapping = {
-        "customerid": "customerID",
-        "seniorcitizen": "SeniorCitizen",
-        "phoneservice": "PhoneService",
-        "multiplelines": "MultipleLines",
-        "internetservice": "InternetService",
-        "onlinesecurity": "OnlineSecurity",
-        "onlinebackup": "OnlineBackup",
-        "deviceprotection": "DeviceProtection",
-        "techsupport": "TechSupport",
-        "streamingtv": "StreamingTV",
-        "streamingmovies": "StreamingMovies",
-        "paperlessbilling": "PaperlessBilling",
-        "paymentmethod": "PaymentMethod",
-        "monthlycharges": "MonthlyCharges",
-        "totalcharges": "TotalCharges",
-        "churn": "Churn"
-    }
-    # Apply casing standardization for any columns that might be lowercase
-    df_clean = df_clean.rename(columns=lambda c: col_mapping.get(c.lower(), c))
-    
-    target_col = config_loader.feature.get("target_column", "Churn")
-    # 21 columns required (or 20 if Churn is missing, we'll insert a placeholder Churn)
-    if target_col not in df_clean.columns:
-        df_clean[target_col] = None
-        
-    df_clean = fix_whitespace_blanks(df_clean, logger)
-    df_clean = fix_total_charges(df_clean, logger)
-    df_clean = drop_duplicates(df_clean, logger)
-    
-    # Reset index to ensure 0-based sequential row indexing
-    df_clean = df_clean.reset_index(drop=True)
-    return df_clean
 
 
 def batch_predict_and_explain(df: pd.DataFrame, db: Session, upload_id: int, threshold: float = None) -> int:
@@ -255,28 +182,31 @@ def batch_predict_and_explain(df: pd.DataFrame, db: Session, upload_id: int, thr
     
     # Model predictions
     y_prob = model_obj.predict_proba(X_aligned)[:, 1]
-    # Resolve classification threshold dynamically (override parameter -> config -> fallback)
+    # Resolve classification threshold dynamically (override parameter -> config)
     if threshold is None:
-        threshold = config_loader.model.get("decision_threshold", 0.15)
+        threshold = config_loader.model.get("decision_threshold")
+        if threshold is None:
+            raise ValueError("Configuration Error: 'decision_threshold' is missing from the model configuration.")
     is_high_risk = (y_prob >= threshold).astype(bool)
     
     # Predict clusters by projecting preprocessed features to 16-dimensional latent space via Autoencoder
     autoencoder = get_autoencoder()
+    seg_cfg = config_loader.model.get("segmentation")
+    if seg_cfg is None or "continuous_features" not in seg_cfg:
+        raise ValueError("Configuration Error: 'segmentation.continuous_features' is missing from the model configuration.")
+    cont_cols = seg_cfg["continuous_features"]
+    
     if autoencoder is not None:
         try:
             X_latent = autoencoder.transform(X_transformed.astype(np.float32))
             cluster_labels = kmeans_obj.predict(X_latent)
         except Exception as e:
             logger.warning(f"Failed to project features using Autoencoder: {e}. Falling back to raw continuous features.")
-            seg_cfg = config_loader.model.get("segmentation", {})
-            cont_cols = seg_cfg.get("continuous_features", ["numeric__tenure", "numeric__MonthlyCharges", "numeric__num_services"])
             actual_cont_cols = [col for col in cont_cols if col in X_df.columns]
             X_continuous = X_df[actual_cont_cols] if actual_cont_cols else X_df
             cluster_labels = kmeans_obj.predict(X_continuous)
     else:
         logger.warning("Autoencoder model is None. Falling back to raw continuous features for cluster prediction.")
-        seg_cfg = config_loader.model.get("segmentation", {})
-        cont_cols = seg_cfg.get("continuous_features", ["numeric__tenure", "numeric__MonthlyCharges", "numeric__num_services"])
         actual_cont_cols = [col for col in cont_cols if col in X_df.columns]
         X_continuous = X_df[actual_cont_cols] if actual_cont_cols else X_df
         cluster_labels = kmeans_obj.predict(X_continuous)
