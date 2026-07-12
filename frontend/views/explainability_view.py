@@ -14,9 +14,9 @@ def render_explainability_view(
     st.subheader("Model Explainability (SHAP)")
     st.write("Understand the global drivers behind customer churn predictions using SHAP (SHapley Additive exPlanations) values.")
 
-    artifacts_dir = os.path.join(project_root, "ml", "artifacts")
-    shap_summary_path = os.path.join(artifacts_dir, "shap_summary_plot.png")
-    shap_beeswarm_path = os.path.join(artifacts_dir, "shap_beeswarm_plot.png")
+    plots_dir = os.path.join(project_root, "ml", "artifacts", "plots")
+    shap_summary_path = os.path.join(plots_dir, "shap_summary.png")
+    shap_beeswarm_path = os.path.join(plots_dir, "shap_beeswarm.png")
 
     st.markdown("<br>", unsafe_allow_html=True)
 

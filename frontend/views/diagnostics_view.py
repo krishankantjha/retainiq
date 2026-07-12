@@ -49,8 +49,9 @@ def render_diagnostics_view(
         st.write("Holdout test dataset evaluation for the soft-voting GBDT ensemble.")
         
         c1, c2 = st.columns(2)
-        roc_path = os.path.join(artifacts_dir, "roc_curve.png")
-        pr_path = os.path.join(artifacts_dir, "precision_recall_curve.png")
+        plots_dir = os.path.join(project_root, "ml", "artifacts", "plots")
+        roc_path = os.path.join(plots_dir, "roc_curve.png")
+        pr_path = os.path.join(plots_dir, "precision_recall_curve.png")
         
         with c1:
             if os.path.exists(roc_path):
@@ -99,8 +100,8 @@ def render_diagnostics_view(
         st.write("Reliability curves representing observed vs predicted frequencies, and cost-benefit optimization bounds.")
         
         cc1, cc2 = st.columns(2)
-        cal_path = os.path.join(artifacts_dir, "calibration_comparison.png")
-        thresh_path = os.path.join(artifacts_dir, "threshold_optimization.png")
+        cal_path = os.path.join(plots_dir, "calibration_curve.png")
+        thresh_path = os.path.join(plots_dir, "threshold_sweep.png")
         
         with cc1:
             if os.path.exists(cal_path):
@@ -136,7 +137,7 @@ def render_diagnostics_view(
         st.markdown("### Confusion Matrix")
         st.write("Visualize the ratio of True Positives, True Negatives, False Positives, and False Negatives on holdout validation data.")
         
-        cm_path = os.path.join(artifacts_dir, "confusion_matrix.png")
+        cm_path = os.path.join(plots_dir, "confusion_matrix.png")
         if os.path.exists(cm_path):
             st.image(cm_path, caption="Confusion Matrix heatmap", width=480)
         else:
