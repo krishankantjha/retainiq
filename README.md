@@ -297,7 +297,11 @@ python -m pytest
 * **Cryptography Integrity**:
   During server boot, the application reads the SHA-256 hashes of `pipeline.pkl` and `model_ensemble.pkl` inside `manifest.json`. If a mismatch is detected, startup aborts with an `ArtifactValidationError` to prevent loading corrupted model files.
 * **Thread-Safe Memory Sweepers**:
-  API requests eviction loops clear old timestamps periodically (every 500 requests) inside the sliding-window middleware to prevent memory growth leaks in production.
+  API requests eviction loops clear old timestamps periodically (every 500 requests) inside the sliding-window rate-limiting middleware to prevent memory growth leaks in production.
+* **SQLite Concurrency Lock Protection**:
+  During local SQLite usage, write locks can block simultaneous queries. RetainIQ processes upload parsing tasks sequentially inside a background worker queue to avoid contention. PostgreSQL is used in staging/production to natively scale concurrent reads and writes.
+* **Relational Database Cascades**:
+  The persistence schema utilizes strict SQL relational cascades. Deleting any `Upload` record automatically cascades and purges all dependent customer profiles and prediction logs, maintaining DB integrity and clean storage.
 
 ---
 
