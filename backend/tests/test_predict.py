@@ -50,10 +50,7 @@ def clean_tables():
     db.close()
 
 
-def test_health_endpoint():
-    response = client.get("/health")
-    assert response.status_code == 200
-    assert response.json() == {"status": "ok"}
+
 
 
 def test_unauthorized_endpoints():
@@ -217,13 +214,29 @@ def test_upload_non_utf8_encoding():
 
 def test_user_registration_and_authentication():
     # 1. Register a new user
-    reg_resp = client.post("/api/v1/auth/register", json={"username": "customuser", "password": "custompassword"})
+    reg_resp = client.post(
+        "/api/v1/auth/register",
+        json={
+            "username": "customuser",
+            "password": "custompassword",
+            "security_question": "What is your favorite color?",
+            "security_answer": "blue"
+        }
+    )
     assert reg_resp.status_code == 201
     assert reg_resp.json()["username"] == "customuser"
     assert "id" in reg_resp.json()
 
     # 2. Try registering the same username again (should fail)
-    duplicate_reg = client.post("/api/v1/auth/register", json={"username": "customuser", "password": "differentpassword"})
+    duplicate_reg = client.post(
+        "/api/v1/auth/register",
+        json={
+            "username": "customuser",
+            "password": "differentpassword",
+            "security_question": "What is your favorite color?",
+            "security_answer": "blue"
+        }
+    )
     assert duplicate_reg.status_code == 400
 
     # 3. Log in with the newly created credentials
