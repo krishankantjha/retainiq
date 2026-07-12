@@ -1,10 +1,10 @@
-# Production Deployment Guide: RetainIQ Customer Retention Platform
+# Deployment Guide: RetainIQ Customer Retention Platform
 
 This guide covers production deployment configurations, container orchestration, environment setup, and database migrations for the RetainIQ platform.
 
 ---
 
-## Database Requirements for Production
+## Database Requirements 
 
 Avoid using SQLite in production. Because SQLite relies on file-level write locking, concurrent writes from the FastAPI background worker (`process_upload_task`) and the main API handler will trigger locking exceptions (`OperationalError: database is locked`). Use PostgreSQL instead.
 
