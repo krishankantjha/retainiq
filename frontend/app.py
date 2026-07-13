@@ -122,10 +122,10 @@ if st.session_state.get("jwt_token") is None:
 else:
     padding_top = "calc(var(--navbar-height) + 1.5rem)"
     if is_collapsed:
-        content_padding_left = "calc(var(--sidebar-collapsed-width) + 24px)"
-        navbar_padding_left = "calc(var(--sidebar-collapsed-width) + 24px)"
+        content_padding_left = "2.5rem"
+        navbar_padding_left = "2.5rem"
     else:
-        content_padding_left = "calc(var(--sidebar-width) + 24px)"
+        content_padding_left = "2.5rem"
         navbar_padding_left = "calc(var(--sidebar-width) + 24px)"
 
 # Mobile side overlay menu setup
