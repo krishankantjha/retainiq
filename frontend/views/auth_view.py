@@ -47,7 +47,7 @@ def render_auth_view(api_client: RetainIQAPIClient, primary_color_hex: str, seco
         /* Layout row configuration */
         div[data-testid="stHorizontalBlock"] {{
             align-items: center !important;
-            margin-top: 8vh !important;
+            margin-top: 3vh !important;
             gap: 3rem !important;
         }}
         
@@ -58,7 +58,7 @@ def render_auth_view(api_client: RetainIQAPIClient, primary_color_hex: str, seco
             border: 1px solid rgba(255, 255, 255, 0.12) !important;
             border-top: 1.5px solid rgba({rgb_primary[0]}, {rgb_primary[1]}, {rgb_primary[2]}, 0.45) !important;
             border-radius: 16px !important;
-            padding: 3rem 2.5rem !important;
+            padding: 2.2rem 2rem !important;
             box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
             transition: transform 0.3s ease, box-shadow 0.3s ease !important;
         }}
@@ -309,9 +309,9 @@ def render_auth_view(api_client: RetainIQAPIClient, primary_color_hex: str, seco
     with col_left:
         # Left branding block & Product values
         branding_html = f"""
-        <div class="brand-container" style="padding: 3.5rem 2.5rem; font-family: 'Inter', sans-serif; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+        <div class="brand-container" style="padding: 2.2rem 2.0rem; font-family: 'Inter', sans-serif; margin-top: 0.5rem; margin-bottom: 0.5rem;">
             <!-- Premium Logo -->
-            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 3.5rem;">
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 2.2rem;">
                 <svg role="img" aria-label="RetainIQ Crystal Logo" width="48" height="48" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <polygon points="50,10 85,35 85,65 50,90 15,65 15,35" fill="url(#gemGrad)" />
                     <polygon points="50,10 50,90 85,65 85,35" fill="url(#gemGlow)" opacity="0.6" />
@@ -322,17 +322,17 @@ def render_auth_view(api_client: RetainIQAPIClient, primary_color_hex: str, seco
                     <polygon points="50,90 15,65 50,75" fill="#6366f1" opacity="0.3" />
                     <defs>
                         <linearGradient id="gemGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#8b5cf6" />
-                            <stop offset="50%" stop-color="#6366f1" />
-                            <stop offset="100%" stop-color="#4f46e5" />
+                             <stop offset="0%" stop-color="#8b5cf6" />
+                             <stop offset="50%" stop-color="#6366f1" />
+                             <stop offset="100%" stop-color="#4f46e5" />
                         </linearGradient>
                         <linearGradient id="gemGlow" x1="50%" y1="0%" x2="50%" y2="100%">
-                            <stop offset="0%" stop-color="#c084fc" stop-opacity="0.8"/>
-                            <stop offset="100%" stop-color="#6366f1" stop-opacity="0.1"/>
+                             <stop offset="0%" stop-color="#c084fc" stop-opacity="0.8"/>
+                             <stop offset="100%" stop-color="#6366f1" stop-opacity="0.1"/>
                         </linearGradient>
                         <linearGradient id="gemShadow" x1="0%" y1="50%" x2="100%" y2="50%">
-                            <stop offset="0%" stop-color="#000000" stop-opacity="0.6"/>
-                            <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+                             <stop offset="0%" stop-color="#000000" stop-opacity="0.6"/>
+                             <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
                         </linearGradient>
                     </defs>
                 </svg>
@@ -343,42 +343,42 @@ def render_auth_view(api_client: RetainIQAPIClient, primary_color_hex: str, seco
             </div>
 
             <!-- Header and Tagline -->
-            <div style="margin-top: 2rem;">
-                <h1 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 2.6rem; line-height: 1.25; color: #f8fafc; margin-bottom: 1.2rem; letter-spacing: -0.8px;">
+            <div style="margin-top: 1rem;">
+                <h1 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 2.3rem; line-height: 1.25; color: #f8fafc; margin-bottom: 0.8rem; letter-spacing: -0.8px;">
                     Predict churn.<br>
                     <span style="background: linear-gradient(135deg, #a78bfa, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Understand customers.</span><br>
                     Retain revenue.
                 </h1>
-                <p style="color: #94a3b8; font-size: 0.95rem; line-height: 1.6; font-family: 'Inter', sans-serif; margin-bottom: 4.5rem; max-width: 480px;">
+                <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.5; font-family: 'Inter', sans-serif; margin-bottom: 2.5rem; max-width: 480px;">
                     RetainIQ uses advanced AI and explainable models to identify at-risk customers, uncover key drivers of churn, and recommend actions that drive retention and revenue growth.
                 </p>
             </div>
 
             <!-- Features Cards Grid - Refined Padding, Icon Sizing, and Typography -->
-            <div style="display: flex; gap: 14px; flex-wrap: wrap; margin-top: 2rem; margin-bottom: 2rem;">
-                <div class="feature-card" style="flex: 1; min-width: 105px; padding: 18px 14px; background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; text-align: center; box-shadow: 0 6px 16px rgba(0,0,0,0.18);">
-                    <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 8px; width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px; color: #6366f1;">
-                        <svg role="img" aria-label="Predictions Icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 1.5rem; margin-bottom: 1rem;">
+                <div class="feature-card" style="flex: 1; min-width: 105px; padding: 12px 10px; background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; text-align: center; box-shadow: 0 6px 16px rgba(0,0,0,0.18);">
+                    <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 8px; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 8px; color: #6366f1;">
+                        <svg role="img" aria-label="Predictions Icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
                     </div>
-                    <div style="font-weight: 600; font-size: 0.82rem; color: #f8fafc; font-family: 'Inter', sans-serif; line-height: 1.4;">AI-Powered Predictions</div>
+                    <div style="font-weight: 600; font-size: 0.78rem; color: #f8fafc; font-family: 'Inter', sans-serif; line-height: 1.3;">AI-Powered Predictions</div>
                 </div>
-                <div class="feature-card" style="flex: 1; min-width: 105px; padding: 18px 14px; background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; text-align: center; box-shadow: 0 6px 16px rgba(0,0,0,0.18);">
-                    <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 8px; width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px; color: #6366f1;">
-                        <svg role="img" aria-label="Insights Icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                <div class="feature-card" style="flex: 1; min-width: 105px; padding: 12px 10px; background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; text-align: center; box-shadow: 0 6px 16px rgba(0,0,0,0.18);">
+                    <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 8px; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 8px; color: #6366f1;">
+                        <svg role="img" aria-label="Insights Icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                     </div>
-                    <div style="font-weight: 600; font-size: 0.82rem; color: #f8fafc; font-family: 'Inter', sans-serif; line-height: 1.4;">Customer Insights</div>
+                    <div style="font-weight: 600; font-size: 0.78rem; color: #f8fafc; font-family: 'Inter', sans-serif; line-height: 1.3;">Customer Insights</div>
                 </div>
-                <div class="feature-card" style="flex: 1; min-width: 105px; padding: 18px 14px; background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; text-align: center; box-shadow: 0 6px 16px rgba(0,0,0,0.18);">
-                    <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 8px; width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px; color: #6366f1;">
-                        <svg role="img" aria-label="Explainable AI Icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <div class="feature-card" style="flex: 1; min-width: 105px; padding: 12px 10px; background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; text-align: center; box-shadow: 0 6px 16px rgba(0,0,0,0.18);">
+                    <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 8px; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 8px; color: #6366f1;">
+                        <svg role="img" aria-label="Explainable AI Icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                     </div>
-                    <div style="font-weight: 600; font-size: 0.82rem; color: #f8fafc; font-family: 'Inter', sans-serif; line-height: 1.4;">Explainable AI (XAI)</div>
+                    <div style="font-weight: 600; font-size: 0.78rem; color: #f8fafc; font-family: 'Inter', sans-serif; line-height: 1.3;">Explainable AI (XAI)</div>
                 </div>
-                <div class="feature-card" style="flex: 1; min-width: 105px; padding: 18px 14px; background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; text-align: center; box-shadow: 0 6px 16px rgba(0,0,0,0.18);">
-                    <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 8px; width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px; color: #6366f1;">
-                        <svg role="img" aria-label="Retention Chart Icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path></svg>
+                <div class="feature-card" style="flex: 1; min-width: 105px; padding: 12px 10px; background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; text-align: center; box-shadow: 0 6px 16px rgba(0,0,0,0.18);">
+                    <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 8px; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 8px; color: #6366f1;">
+                        <svg role="img" aria-label="Retention Chart Icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path></svg>
                     </div>
-                    <div style="font-weight: 600; font-size: 0.82rem; color: #f8fafc; font-family: 'Inter', sans-serif; line-height: 1.4;">Data-Driven Retention</div>
+                    <div style="font-weight: 600; font-size: 0.78rem; color: #f8fafc; font-family: 'Inter', sans-serif; line-height: 1.3;">Data-Driven Retention</div>
                 </div>
             </div>
         </div>
