@@ -2,6 +2,7 @@ import streamlit as st
 import time
 import os
 import sys
+import textwrap
 
 # Add project root to path to load configs
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -932,7 +933,7 @@ def get_active_class(slug):
 current_search = st.query_params.get("search", "")
 
 # Render Custom Top Sticky Navbar (Appendix B)
-st.markdown(f"""
+st.markdown(textwrap.dedent(f"""
 <div class="sticky-navbar">
     <div class="navbar-left">
         <a href="/?page={active_slug}&collapsed={toggle_collapsed_str}&theme={theme}" target="_self" class="nav-icon" style="font-size: 1.25rem;">
@@ -987,7 +988,7 @@ st.markdown(f"""
         </div>
     </div>
 </div>
-""", unsafe_allow_html=True)
+"""), unsafe_allow_html=True)
 
 # Render Custom HTML Sidebar (Appendix C & D & G)
 # Define SVG path strings for sidebar icons
@@ -1003,7 +1004,7 @@ svg_triangle = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><pat
 svg_settings = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>'
 svg_logout = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>'
 
-st.markdown(f"""
+st.markdown(textwrap.dedent(f"""
 <div class="sidebar {collapsed_class} {menu_class}">
     <div class="sidebar-menu">
         <div class="sidebar-group-header">ANALYTICS</div>
@@ -1067,7 +1068,7 @@ st.markdown(f"""
         <span class="logout-label">Log Out</span>
     </a>
 </div>
-""", unsafe_allow_html=True)
+"""), unsafe_allow_html=True)
 
 page = st.session_state.current_page
 
