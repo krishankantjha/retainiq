@@ -218,32 +218,41 @@ st.markdown(f"""
         display: none !important;
     }}
     
+    /* Align vertical elements inside native sidebar to support flex bottom user-card placement */
+    [data-testid="stSidebar"] div[data-testid="stVerticalBlockBorderWrapper"] > div[data-testid="stVerticalBlock"] {{
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
+        justify-content: flex-start !important;
+        gap: 0px !important;
+    }}
+    
     /* Sidebar Navigation Button Restyling */
     [data-testid="stSidebar"] button[data-testid="stBaseButton-secondary"] {{
         display: flex !important;
         align-items: center !important;
         justify-content: flex-start !important;
         width: 100% !important;
-        height: 48px !important;
-        border: none !important;
+        height: 40px !important; /* Shrunk from 48px to 40px for a more compact SaaS feel */
+        border: 1px solid transparent !important; /* Flat card feel by default */
         background: transparent !important;
         color: var(--muted) !important;
-        border-radius: var(--radius-md) !important;
+        border-radius: 8px !important; /* Standard SaaS card rounded corners */
         font-family: 'Inter', sans-serif !important;
-        font-size: 15px !important;
+        font-size: 14px !important;
         font-weight: 500 !important;
-        margin-bottom: 4px !important;
-        padding: 0px 16px !important;
-        text-align: left !important;
+        margin-bottom: 2px !important; /* Tighten gap between items */
+        padding: 0px 12px !important; /* Shrunk padding to tighten spacing */
         box-shadow: none !important;
         transition: var(--transition) !important;
     }}
     [data-testid="stSidebar"] button[data-testid="stBaseButton-secondary"] p {{
         font-family: 'Inter', sans-serif !important;
         color: inherit !important;
-        font-size: 15px !important;
+        font-size: 14px !important;
         font-weight: inherit !important;
         margin: 0 !important;
+        word-spacing: -3px !important; /* Shrink spacing between emoji icon and label text */
     }}
     [data-testid="stSidebar"] button[data-testid="stBaseButton-secondary"]:hover {{
         background: var(--panel-hover) !important;
@@ -251,15 +260,39 @@ st.markdown(f"""
         transform: translateX(2px) !important;
     }}
 
+    /* Logout button custom overrides */
+    [data-testid="stSidebar"] .st-key-btn_logout button {{
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        height: 40px !important;
+        color: var(--muted) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 8px !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        background: transparent !important;
+        transition: var(--transition) !important;
+    }}
+    [data-testid="stSidebar"] .st-key-btn_logout button p {{
+        word-spacing: 0px !important; /* Keep default word spacing for logout label */
+    }}
+    [data-testid="stSidebar"] .st-key-btn_logout button:hover {{
+        background: rgba(239, 68, 68, 0.08) !important;
+        border-color: rgba(239, 68, 68, 0.3) !important;
+        color: var(--red) !important;
+    }}
+
     [data-testid="stSidebar"] .sidebar-group-header {{
-        font-size: 11px;
-        font-weight: 700;
-        color: var(--muted);
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        margin: 32px 12px 12px 12px;
-        transition: var(--transition);
-        text-align: left;
+        font-size: 10px !important; /* Shrunk from 11px to 10px for elegance */
+        font-weight: 700 !important;
+        color: var(--muted) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1.2px !important;
+        margin: 20px 8px 8px 8px !important; /* Shrunk margins significantly to tighten spacing */
+        transition: var(--transition) !important;
+        text-align: left !important;
         display: {"none" if is_collapsed else "block"} !important;
     }}
 
@@ -937,12 +970,12 @@ st.markdown(f"""
 
         /* Dynamic active button styles inside the native stSidebar */
         .st-key-btn_{active_slug} button {{
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.25) 0%, rgba(99, 102, 241, 0.1) 100%) !important;
-            border: 1px solid var(--primary) !important;
-            border-left: 4px solid var(--primary) !important;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.22) 0%, rgba(99, 102, 241, 0.08) 100%) !important;
+            border: 1px solid rgba(99, 102, 241, 0.35) !important;
+            border-left: 3.5px solid var(--primary) !important;
             color: var(--text) !important;
             font-weight: 600 !important;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15) !important;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.12) !important;
         }}
 
         /* Hover settings overlay button inside profile dropdown */
