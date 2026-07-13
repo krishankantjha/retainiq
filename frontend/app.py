@@ -988,7 +988,7 @@ st.markdown(textwrap.dedent(f"""
         </div>
     </div>
 </div>
-"""), unsafe_allow_html=True)
+""".strip()), unsafe_allow_html=True)
 
 # Render Custom HTML Sidebar (Appendix C & D & G)
 # Define SVG path strings for sidebar icons
@@ -1068,7 +1068,7 @@ st.markdown(textwrap.dedent(f"""
         <span class="logout-label">Log Out</span>
     </a>
 </div>
-"""), unsafe_allow_html=True)
+""".strip()), unsafe_allow_html=True)
 
 page = st.session_state.current_page
 
