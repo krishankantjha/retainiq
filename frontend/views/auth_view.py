@@ -32,7 +32,7 @@ def render_auth_view(api_client: RetainIQAPIClient, primary_color_hex: str, seco
         }}
         
         /* Set base premium background with dark grid and color glows */
-        html, body, [data-testid="stAppViewContainer"], [data-testid="stMain"], .stApp {{
+        .stApp {{
             background-color: #030014 !important;
             background-image: 
                 radial-gradient(circle at 10% 20%, rgba({rgb_primary[0]}, {rgb_primary[1]}, {rgb_primary[2]}, 0.15), transparent 45%),
@@ -42,14 +42,12 @@ def render_auth_view(api_client: RetainIQAPIClient, primary_color_hex: str, seco
                 linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px) !important;
             background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px !important;
             background-attachment: fixed !important;
-            overflow: hidden !important;
-            height: 100vh !important;
         }}
         
         /* Layout row configuration */
         div[data-testid="stHorizontalBlock"] {{
             align-items: center !important;
-            margin-top: 3vh !important;
+            margin-top: 1.5vh !important;
             gap: 3rem !important;
         }}
         
@@ -60,7 +58,7 @@ def render_auth_view(api_client: RetainIQAPIClient, primary_color_hex: str, seco
             border: 1px solid rgba(255, 255, 255, 0.12) !important;
             border-top: 1.5px solid rgba({rgb_primary[0]}, {rgb_primary[1]}, {rgb_primary[2]}, 0.45) !important;
             border-radius: 16px !important;
-            padding: 2.2rem 2rem !important;
+            padding: 1.6rem 2rem !important;
             box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
             transition: transform 0.3s ease, box-shadow 0.3s ease !important;
         }}

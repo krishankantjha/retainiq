@@ -101,7 +101,7 @@ collapsed_class = "collapsed" if is_collapsed else ""
 if st.session_state.get("jwt_token") is None:
     content_padding_left = "2.5rem"
     navbar_padding_left = "2.5rem"
-    padding_top = "2.5rem"
+    padding_top = "1.5rem"
 else:
     padding_top = "calc(var(--navbar-height) + 1.5rem)"
     if is_collapsed:
