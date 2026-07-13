@@ -901,6 +901,7 @@ st.markdown(f"""
 
         /* Make every streamlit button wrapper inside overlay have height 48px and margin-bottom 4px */
         .st-key-sidebar_btn_overlay .stButton {{
+            width: 100% !important;
             height: 48px !important;
             margin-bottom: 4px !important;
             pointer-events: auto !important;
@@ -1301,34 +1302,34 @@ with st.container(key="sidebar_btn_overlay"):
     with st.container(key="sidebar_menu_overlay"):
         # Spacers align overlay buttons to visual nav anchors
         st.markdown('<div class="sidebar-group-header" style="opacity: 0; pointer-events: none;">ANALYTICS</div>', unsafe_allow_html=True)
-        if st.button("", key="btn_dashboard"):
+        if st.button("", key="btn_dashboard", use_container_width=True):
             navigate_to("dashboard")
-        if st.button("", key="btn_explorer"):
+        if st.button("", key="btn_explorer", use_container_width=True):
             navigate_to("explorer")
-        if st.button("", key="btn_simulator"):
+        if st.button("", key="btn_simulator", use_container_width=True):
             navigate_to("simulator")
-        if st.button("", key="btn_analytics"):
+        if st.button("", key="btn_analytics", use_container_width=True):
             navigate_to("analytics")
-        if st.button("", key="btn_explainability"):
+        if st.button("", key="btn_explainability", use_container_width=True):
             navigate_to("explainability")
             
         st.markdown('<div class="sidebar-group-header" style="opacity: 0; pointer-events: none;">DATA & MODELS</div>', unsafe_allow_html=True)
-        if st.button("", key="btn_segments"):
+        if st.button("", key="btn_segments", use_container_width=True):
             navigate_to("segments")
-        if st.button("", key="btn_upload"):
+        if st.button("", key="btn_upload", use_container_width=True):
             navigate_to("upload")
-        if st.button("", key="btn_diagnostics"):
+        if st.button("", key="btn_diagnostics", use_container_width=True):
             navigate_to("diagnostics")
-        if st.button("", key="btn_drift"):
+        if st.button("", key="btn_drift", use_container_width=True):
             navigate_to("drift")
             
         st.markdown('<div class="sidebar-group-header" style="opacity: 0; pointer-events: none;">CONFIGURATION</div>', unsafe_allow_html=True)
-        if st.button("", key="btn_settings"):
+        if st.button("", key="btn_settings", use_container_width=True):
             navigate_to("settings")
             
     # User card spacer (margin-top: auto pushes user card and logout button to bottom)
     st.markdown('<div class="user-card" style="opacity: 0; pointer-events: none;"></div>', unsafe_allow_html=True)
-    if st.button("", key="btn_logout"):
+    if st.button("", key="btn_logout", use_container_width=True):
         st.query_params["logout"] = "true"
         st.rerun()
 
