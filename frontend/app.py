@@ -848,8 +848,8 @@ st.markdown(f"""
         }}
 
         /* --- Hybrid Navigation Overlays --- */
-        /* Disable pointer events on visual links to prevent browser page reloads */
-        .nav-item, .nav-icon, .settings-nav-link, .logout-btn, .search-container {{
+        /* Disable pointer events on visual sidebar/links to prevent browser page reloads */
+        .sidebar, .nav-item, .nav-icon, .settings-nav-link, .logout-btn, .search-container {{
             pointer-events: none !important;
         }}
 
@@ -873,20 +873,30 @@ st.markdown(f"""
             padding: 1.5rem 0.5rem !important;
         }}
 
+        /* Zero out all default Streamlit vertical block padding, margins, and gaps inside the overlays */
+        .st-key-sidebar_btn_overlay div[data-testid="stVerticalBlockBorderWrapper"],
+        .st-key-sidebar_btn_overlay div[data-testid="stVerticalBlock"],
+        .st-key-sidebar_btn_overlay .element-container,
+        .st-key-sidebar_menu_overlay div[data-testid="stVerticalBlockBorderWrapper"],
+        .st-key-sidebar_menu_overlay div[data-testid="stVerticalBlock"],
+        .st-key-sidebar_menu_overlay .element-container {{
+            gap: 0px !important;
+            padding: 0px !important;
+            margin: 0px !important;
+        }}
+
         /* Force vertical block to fill container height and use flex space-between */
         .st-key-sidebar_btn_overlay > div[data-testid="stVerticalBlockBorderWrapper"] > div[data-testid="stVerticalBlock"] {{
             display: flex !important;
             flex-direction: column !important;
             height: 100% !important;
             justify-content: flex-start !important;
-            gap: 0 !important;
         }}
 
         /* The menu sub-container should also be a flex column with no gap */
         .st-key-sidebar_menu_overlay > div[data-testid="stVerticalBlockBorderWrapper"] > div[data-testid="stVerticalBlock"] {{
             display: flex !important;
             flex-direction: column !important;
-            gap: 0 !important;
         }}
 
         /* Make every streamlit button wrapper inside overlay have height 48px and margin-bottom 4px */
