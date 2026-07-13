@@ -33,13 +33,6 @@ danger_color_hex = theme_cfg.get("danger_color", "#EF4444").lower()
 # Instantiate class-based API client
 api_client = RetainIQAPIClient()
 
-st.set_page_config(
-    page_title="RetainIQ — Customer Churn Dashboard",
-    page_icon="🔮",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-
 # Parse routing and layout parameters from query params
 if st.query_params.get("logout") == "true":
     st.query_params.clear()
@@ -47,6 +40,19 @@ if st.query_params.get("logout") == "true":
     st.session_state.current_user = None
     st.cache_data.clear()
     st.rerun()
+
+is_collapsed = (st.query_params.get("collapsed") == "true")
+collapsed_str = "true" if is_collapsed else "false"
+toggle_collapsed_str = "false" if is_collapsed else "true"
+collapsed_class = "collapsed" if is_collapsed else ""
+initial_sidebar_state = "collapsed" if is_collapsed else "expanded"
+
+st.set_page_config(
+    page_title="RetainIQ — Customer Churn Dashboard",
+    page_icon="🔮",
+    layout="wide",
+    initial_sidebar_state=initial_sidebar_state
+)
 
 # Theme setup
 theme = st.query_params.get("theme", "dark")
@@ -89,12 +95,6 @@ else:
             linear-gradient(rgba(255, 255, 255, 0.008) 1px, transparent 1px),
             linear-gradient(90deg, rgba(255, 255, 255, 0.008) 1px, transparent 1px) !important;
     """
-
-# Sidebar collapse setup
-is_collapsed = (st.query_params.get("collapsed") == "true")
-collapsed_str = "true" if is_collapsed else "false"
-toggle_collapsed_str = "false" if is_collapsed else "true"
-collapsed_class = "collapsed" if is_collapsed else ""
 
 # Main content and navbar paddings
 # If the user is not authenticated, do not offset the main container for the sidebar/navbar
@@ -182,12 +182,68 @@ st.markdown(f"""
         display: none !important;
         visibility: hidden !important;
     }}
+    /* Native Sidebar Restyling to match visual panel (Appendix C & D & G) */
     [data-testid="stSidebar"] {{
+        background: var(--panel) !important;
+        backdrop-filter: blur(18px) !important;
+        border-right: 1px solid var(--border) !important;
+        width: var(--sidebar-width) !important;
+        transition: var(--transition) !important;
+    }}
+    [data-testid="stSidebar"] > div:first-child {{
+        padding: 1.5rem 0.5rem !important;
+        background: transparent !important;
+    }}
+    [data-testid="stSidebar"] [data-testid="stSidebarHeader"] {{
         display: none !important;
-        width: 0 !important;
     }}
     [data-testid="stSidebarCollapsedControl"] {{
         display: none !important;
+    }}
+    
+    /* Sidebar Navigation Button Restyling */
+    [data-testid="stSidebar"] button[data-testid="stBaseButton-secondary"] {{
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        width: 100% !important;
+        height: 48px !important;
+        border: none !important;
+        background: transparent !important;
+        color: var(--muted) !important;
+        border-radius: var(--radius-md) !important;
+        font-family: 'Inter', sans-serif !important;
+        font-size: 15px !important;
+        font-weight: 500 !important;
+        margin-bottom: 4px !important;
+        padding: 0px 16px !important;
+        text-align: left !important;
+        box-shadow: none !important;
+        transition: var(--transition) !important;
+    }}
+    [data-testid="stSidebar"] button[data-testid="stBaseButton-secondary"] p {{
+        font-family: 'Inter', sans-serif !important;
+        color: inherit !important;
+        font-size: 15px !important;
+        font-weight: inherit !important;
+        margin: 0 !important;
+    }}
+    [data-testid="stSidebar"] button[data-testid="stBaseButton-secondary"]:hover {{
+        background: var(--panel-hover) !important;
+        color: var(--text) !important;
+        transform: translateX(2px) !important;
+    }}
+
+    [data-testid="stSidebar"] .sidebar-group-header {{
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin: 32px 12px 12px 12px;
+        transition: var(--transition);
+        text-align: left;
+        display: {"none" if is_collapsed else "block"} !important;
     }}
 
     /* Title blocks */
@@ -847,68 +903,13 @@ st.markdown(f"""
             border-left: 5px solid var(--red) !important;
         }}
 
-        /* --- Hybrid Navigation Overlays --- */
-        /* Disable pointer events on visual sidebar/links to prevent browser page reloads */
-        .sidebar, .nav-item, .nav-icon, .settings-nav-link, .logout-btn, .search-container {{
+        /* --- Navbar Overlays --- */
+        /* Disable pointer events on visual links to prevent browser page reloads */
+        .settings-nav-link, .search-container {{
             pointer-events: none !important;
         }}
 
-        /* Sidebar Button Overlay container styling */
-        .st-key-sidebar_btn_overlay {{
-            position: fixed !important;
-            top: var(--navbar-height) !important;
-            left: 0 !important;
-            bottom: 0 !important;
-            width: var(--sidebar-width) !important;
-            background: transparent !important;
-            border: none !important;
-            padding: 1.5rem 1rem !important;
-            z-index: 10000 !important;
-            pointer-events: none !important;
-            transition: var(--transition) !important;
-        }}
-
-        .st-key-sidebar_btn_overlay.collapsed {{
-            width: var(--sidebar-collapsed-width) !important;
-            padding: 1.5rem 0.5rem !important;
-        }}
-
-        /* Zero out all default Streamlit vertical block padding, margins, and gaps inside the overlays */
-        .st-key-sidebar_btn_overlay div[data-testid="stVerticalBlockBorderWrapper"],
-        .st-key-sidebar_btn_overlay div[data-testid="stVerticalBlock"],
-        .st-key-sidebar_btn_overlay .element-container,
-        .st-key-sidebar_menu_overlay div[data-testid="stVerticalBlockBorderWrapper"],
-        .st-key-sidebar_menu_overlay div[data-testid="stVerticalBlock"],
-        .st-key-sidebar_menu_overlay .element-container {{
-            gap: 0px !important;
-            padding: 0px !important;
-            margin: 0px !important;
-        }}
-
-        /* Force vertical block to fill container height and use flex space-between */
-        .st-key-sidebar_btn_overlay > div[data-testid="stVerticalBlockBorderWrapper"] > div[data-testid="stVerticalBlock"] {{
-            display: flex !important;
-            flex-direction: column !important;
-            height: 100% !important;
-            justify-content: flex-start !important;
-        }}
-
-        /* The menu sub-container should also be a flex column with no gap */
-        .st-key-sidebar_menu_overlay > div[data-testid="stVerticalBlockBorderWrapper"] > div[data-testid="stVerticalBlock"] {{
-            display: flex !important;
-            flex-direction: column !important;
-        }}
-
-        /* Make every streamlit button wrapper inside overlay have height 48px and margin-bottom 4px */
-        .st-key-sidebar_btn_overlay .stButton {{
-            width: 100% !important;
-            height: 48px !important;
-            margin-bottom: 4px !important;
-            pointer-events: auto !important;
-        }}
-
-        /* Elevate the parent element-containers of all overlay controls to stack them on top of the visual layout */
-        .element-container:has(.st-key-sidebar_btn_overlay),
+        /* Elevate the parent element-containers of all navbar overlay controls to stack them on top of the visual layout */
         .element-container:has(.st-key-btn_hamburger),
         .element-container:has(.st-key-btn_theme),
         .element-container:has(.st-key-btn_settings_nav),
@@ -917,23 +918,14 @@ st.markdown(f"""
             z-index: 100000 !important;
         }}
 
-        /* Make the actual button completely transparent and fill the parent wrapper */
-        .st-key-sidebar_btn_overlay .stButton button {{
-            width: 100% !important;
-            height: 100% !important;
-            background: transparent !important;
-            border: none !important;
-            color: transparent !important;
-            box-shadow: none !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            cursor: pointer !important;
-        }}
-
-        /* Hover effect on buttons */
-        .st-key-sidebar_btn_overlay .stButton button:hover {{
-            background: var(--panel-hover) !important;
-            border-radius: var(--radius-md) !important;
+        /* Dynamic active button styles inside the native stSidebar */
+        .st-key-btn_{active_slug} button {{
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.25) 0%, rgba(99, 102, 241, 0.1) 100%) !important;
+            border: 1px solid var(--primary) !important;
+            border-left: 4px solid var(--primary) !important;
+            color: var(--text) !important;
+            font-weight: 600 !important;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15) !important;
         }}
 
         /* Hover settings overlay button inside profile dropdown */
@@ -1197,82 +1189,56 @@ st.markdown(f"""<div class="sticky-navbar">
 </div>
 </div>""", unsafe_allow_html=True)
 
-# Render Custom HTML Sidebar (Appendix C & D & G)
-# Define SVG path strings for sidebar icons
-svg_home = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>'
-svg_search = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>'
-svg_sliders = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>'
-svg_chart = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>'
-svg_eye = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>'
-svg_grid = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>'
-svg_upload = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path></svg>'
-svg_activity = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>'
-svg_triangle = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>'
-svg_settings = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>'
-svg_logout = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>'
+# --- Render Native Sidebar Layout ---
+with st.sidebar:
+    # 1. Navigation group header
+    st.markdown('<div class="sidebar-group-header">ANALYTICS</div>', unsafe_allow_html=True)
+    
+    # 2. Sidebar buttons
+    if st.button("📊 Dashboard", key="btn_dashboard", use_container_width=True):
+        navigate_to("dashboard")
+    if st.button("🔍 Customer Explorer", key="btn_explorer", use_container_width=True):
+        navigate_to("explorer")
+    if st.button("🔮 Counterfactual Simulator", key="btn_simulator", use_container_width=True):
+        navigate_to("simulator")
+    if st.button("📈 Analytics", key="btn_analytics", use_container_width=True):
+        navigate_to("analytics")
+    if st.button("🌍 Explainability", key="btn_explainability", use_container_width=True):
+        navigate_to("explainability")
+        
+    # 3. Spacers and group headers
+    st.markdown('<div class="sidebar-group-header">DATA & MODELS</div>', unsafe_allow_html=True)
+    if st.button("🧩 Customer Segments", key="btn_segments", use_container_width=True):
+        navigate_to("segments")
+    if st.button("📤 Upload Dataset", key="btn_upload", use_container_width=True):
+        navigate_to("upload")
+    if st.button("🩺 Model Diagnostics", key="btn_diagnostics", use_container_width=True):
+        navigate_to("diagnostics")
+    if st.button("🚨 Drift Detection", key="btn_drift", use_container_width=True):
+        navigate_to("drift")
+        
+    st.markdown('<div class="sidebar-group-header">CONFIGURATION</div>', unsafe_allow_html=True)
+    if st.button("⚙️ Settings", key="btn_settings", use_container_width=True):
+        navigate_to("settings")
+        
+    # 4. User profile card (rendered as a static styled block)
+    st.markdown("""
+        <div class="user-card" style="margin-top: auto; margin-bottom: 12px;">
+            <div class="user-avatar">AD</div>
+            <div class="user-details">
+                <span class="user-name">Admin User</span>
+                <span class="user-email">admin@retainiq.com</span>
+            </div>
+            <span class="user-menu-dots">⋮</span>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # 5. Logout Button
+    if st.button("🚪 Log Out", key="btn_logout", use_container_width=True):
+        st.query_params["logout"] = "true"
+        st.rerun()
 
-st.markdown(f"""<div class="sidebar {collapsed_class} {menu_class}">
-<div class="sidebar-menu">
-<div class="sidebar-group-header">ANALYTICS</div>
-<a href="/?page=dashboard&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('dashboard')}">
-{svg_home}
-<span class="nav-label">Dashboard</span>
-</a>
-<a href="/?page=explorer&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('explorer')}">
-{svg_search}
-<span class="nav-label">Customer Explorer</span>
-</a>
-<a href="/?page=simulator&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('simulator')}">
-{svg_sliders}
-<span class="nav-label">Counterfactual Simulator</span>
-</a>
-<a href="/?page=analytics&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('analytics')}">
-{svg_chart}
-<span class="nav-label">Analytics</span>
-</a>
-<a href="/?page=explainability&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('explainability')}">
-{svg_eye}
-<span class="nav-label">Explainability</span>
-</a>
-<div class="sidebar-group-header">DATA & MODELS</div>
-<a href="/?page=segments&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('segments')}">
-{svg_grid}
-<span class="nav-label">Customer Segments</span>
-</a>
-<a href="/?page=upload&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('upload')}">
-{svg_upload}
-<span class="nav-label">Upload Dataset</span>
-</a>
-<a href="/?page=diagnostics&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('diagnostics')}">
-{svg_activity}
-<span class="nav-label">Model Diagnostics</span>
-</a>
-<a href="/?page=drift&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('drift')}">
-{svg_triangle}
-<span class="nav-label">Drift Detection</span>
-</a>
-<div class="sidebar-group-header">CONFIGURATION</div>
-<a href="/?page=settings&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('settings')}">
-{svg_settings}
-<span class="nav-label">Settings</span>
-</a>
-</div>
-<div class="user-card">
-<div class="user-avatar">AD</div>
-<div class="user-details">
-<span class="user-name">Admin User</span>
-<span class="user-email">admin@retainiq.com</span>
-</div>
-<span class="user-menu-dots">⋮</span>
-</div>
-<a href="/?logout=true" target="_self" class="logout-btn">
-{svg_logout}
-<span class="logout-label">Log Out</span>
-</a>
-</div>""", unsafe_allow_html=True)
-
-# --- Overlay Widgets for Hybrid Navigation ---
-# 1. Navbar overlays
+# 6. Navbar overlay controls (hamburger, theme, settings_nav, and search)
 if st.button("", key="btn_hamburger"):
     toggle_sidebar()
 
@@ -1282,7 +1248,6 @@ if st.button("", key="btn_theme"):
 if st.button("", key="btn_settings_nav"):
     navigate_to("settings")
 
-# 2. Search input overlay
 search_val = st.text_input(
     "Search",
     value=current_search,
@@ -1296,42 +1261,6 @@ if search_val != current_search:
     st.query_params["collapsed"] = "true" if is_collapsed else "false"
     st.query_params["theme"] = theme
     st.rerun()
-
-# 3. Sidebar container overlay
-with st.container(key="sidebar_btn_overlay"):
-    with st.container(key="sidebar_menu_overlay"):
-        # Spacers align overlay buttons to visual nav anchors
-        st.markdown('<div class="sidebar-group-header" style="opacity: 0; pointer-events: none;">ANALYTICS</div>', unsafe_allow_html=True)
-        if st.button("", key="btn_dashboard", use_container_width=True):
-            navigate_to("dashboard")
-        if st.button("", key="btn_explorer", use_container_width=True):
-            navigate_to("explorer")
-        if st.button("", key="btn_simulator", use_container_width=True):
-            navigate_to("simulator")
-        if st.button("", key="btn_analytics", use_container_width=True):
-            navigate_to("analytics")
-        if st.button("", key="btn_explainability", use_container_width=True):
-            navigate_to("explainability")
-            
-        st.markdown('<div class="sidebar-group-header" style="opacity: 0; pointer-events: none;">DATA & MODELS</div>', unsafe_allow_html=True)
-        if st.button("", key="btn_segments", use_container_width=True):
-            navigate_to("segments")
-        if st.button("", key="btn_upload", use_container_width=True):
-            navigate_to("upload")
-        if st.button("", key="btn_diagnostics", use_container_width=True):
-            navigate_to("diagnostics")
-        if st.button("", key="btn_drift", use_container_width=True):
-            navigate_to("drift")
-            
-        st.markdown('<div class="sidebar-group-header" style="opacity: 0; pointer-events: none;">CONFIGURATION</div>', unsafe_allow_html=True)
-        if st.button("", key="btn_settings", use_container_width=True):
-            navigate_to("settings")
-            
-    # User card spacer (margin-top: auto pushes user card and logout button to bottom)
-    st.markdown('<div class="user-card" style="opacity: 0; pointer-events: none;"></div>', unsafe_allow_html=True)
-    if st.button("", key="btn_logout", use_container_width=True):
-        st.query_params["logout"] = "true"
-        st.rerun()
 
 page = st.session_state.current_page
 
