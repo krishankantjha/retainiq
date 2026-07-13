@@ -41,11 +41,28 @@ if st.query_params.get("logout") == "true":
     st.cache_data.clear()
     st.rerun()
 
+PAGE_MAP = {
+    "dashboard": "📊 Dashboard",
+    "explorer": "🔍 Customer Explorer",
+    "simulator": "🔮 Counterfactual Simulator",
+    "analytics": "📈 Analytics",
+    "explainability": "🌍 Explainability",
+    "segments": "🧩 Customer Segments",
+    "upload": "📤 Upload Dataset",
+    "diagnostics": "🩺 Model Diagnostics",
+    "drift": "🚨 Drift Detection",
+    "settings": "⚙️ Settings"
+}
+
 is_collapsed = (st.query_params.get("collapsed") == "true")
 collapsed_str = "true" if is_collapsed else "false"
 toggle_collapsed_str = "false" if is_collapsed else "true"
 collapsed_class = "collapsed" if is_collapsed else ""
 initial_sidebar_state = "collapsed" if is_collapsed else "expanded"
+
+active_slug = st.query_params.get("page", "dashboard")
+if active_slug not in PAGE_MAP:
+    active_slug = "dashboard"
 
 st.set_page_config(
     page_title="RetainIQ — Customer Churn Dashboard",
@@ -1109,24 +1126,6 @@ if st.session_state.jwt_token is None:
 # --- Authenticated App Context ---
 # --- Authenticated App Context ---
 
-# Define page mapping configuration for routing (Appendix I / J)
-PAGE_MAP = {
-    "dashboard": "📊 Dashboard",
-    "explorer": "🔍 Customer Explorer",
-    "simulator": "🔮 Counterfactual Simulator",
-    "analytics": "📈 Analytics",
-    "explainability": "🌍 Explainability",
-    "segments": "🧩 Customer Segments",
-    "upload": "📤 Upload Dataset",
-    "diagnostics": "🩺 Model Diagnostics",
-    "drift": "🚨 Drift Detection",
-    "settings": "⚙️ Settings"
-}
-
-# Resolve current page parameter from URL
-active_slug = st.query_params.get("page", "dashboard")
-if active_slug not in PAGE_MAP:
-    active_slug = "dashboard"
 page = PAGE_MAP[active_slug]
 
 # Make sure session state page is synced
