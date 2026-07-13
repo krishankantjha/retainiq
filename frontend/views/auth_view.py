@@ -32,7 +32,7 @@ def render_auth_view(api_client: RetainIQAPIClient, primary_color_hex: str, seco
         }}
         
         /* Set base premium background with dark grid and color glows */
-        .stApp {{
+        html, body, [data-testid="stAppViewContainer"], [data-testid="stMain"], .stApp {{
             background-color: #030014 !important;
             background-image: 
                 radial-gradient(circle at 10% 20%, rgba({rgb_primary[0]}, {rgb_primary[1]}, {rgb_primary[2]}, 0.15), transparent 45%),
@@ -42,6 +42,8 @@ def render_auth_view(api_client: RetainIQAPIClient, primary_color_hex: str, seco
                 linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px) !important;
             background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px !important;
             background-attachment: fixed !important;
+            overflow: hidden !important;
+            height: 100vh !important;
         }}
         
         /* Layout row configuration */
