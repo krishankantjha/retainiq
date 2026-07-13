@@ -933,62 +933,55 @@ def get_active_class(slug):
 current_search = st.query_params.get("search", "")
 
 # Render Custom Top Sticky Navbar (Appendix B)
-st.markdown(textwrap.dedent(f"""
-<div class="sticky-navbar">
-    <div class="navbar-left">
-        <a href="/?page={active_slug}&collapsed={toggle_collapsed_str}&theme={theme}" target="_self" class="nav-icon" style="font-size: 1.25rem;">
-            <span class="hamburger-menu">☰</span>
-        </a>
-        <span class="navbar-logo">Retain<span style="color:#6366f1;">IQ</span></span>
-    </div>
-    
-    <div class="navbar-center">
-        <form action="/" method="get" class="search-container">
-            <input type="hidden" name="page" value="explorer">
-            <input type="hidden" name="collapsed" value="{collapsed_str}">
-            <input type="hidden" name="theme" value="{theme}">
-            <span class="search-icon">🔍</span>
-            <input type="text" name="search" class="search-input" placeholder="Search metrics, segments, customers..." value="{current_search}">
-            <span class="search-badge">Ctrl + K</span>
-        </form>
-    </div>
-    
-    <div class="navbar-right">
-        <a href="/?page={active_slug}&collapsed={collapsed_str}&theme={'light' if theme == 'dark' else 'dark'}" target="_self" class="nav-icon" title="Toggle Theme">
-            { '☀️' if theme == 'light' else '🌙' }
-        </a>
-        
-        <div class="notification-dropdown">
-            <span class="nav-icon">
-                🔔<span class="notification-badge">3</span>
-            </span>
-            <div class="notification-content">
-                <div class="notification-item" style="font-weight: 700; color: var(--primary);">System Notifications</div>
-                <div class="notification-item">🚨 Model Drift: Warning detected on commitment score</div>
-                <div class="notification-item">📤 Data Ingestion: Batch import completed successfully</div>
-                <div class="notification-item">🔮 Churn Risk: 19 clients flagged as high risk</div>
-            </div>
-        </div>
-        
-        <span class="nav-icon" title="Help & Documentation">❓</span>
-        
-        <div class="profile-dropdown">
-            <div class="navbar-profile">
-                <div class="profile-avatar">AD</div>
-                <div class="profile-info">
-                    <span class="profile-name">Admin User</span>
-                    <span class="profile-email">admin@retainiq.com</span>
-                </div>
-                <span class="profile-arrow">▼</span>
-            </div>
-            <div class="profile-content">
-                <a href="/?page=settings&collapsed={collapsed_str}&theme={theme}" target="_self" class="profile-link">⚙️ Account Settings</a>
-                <a href="/?logout=true" target="_self" class="profile-link" style="color: var(--red);">🚪 Sign Out</a>
-            </div>
-        </div>
-    </div>
+st.markdown(f"""<div class="sticky-navbar">
+<div class="navbar-left">
+<a href="/?page={active_slug}&collapsed={toggle_collapsed_str}&theme={theme}" target="_self" class="nav-icon" style="font-size: 1.25rem;">
+<span class="hamburger-menu">☰</span>
+</a>
+<span class="navbar-logo">Retain<span style="color:#6366f1;">IQ</span></span>
 </div>
-""".strip()), unsafe_allow_html=True)
+<div class="navbar-center">
+<form action="/" method="get" class="search-container">
+<input type="hidden" name="page" value="explorer">
+<input type="hidden" name="collapsed" value="{collapsed_str}">
+<input type="hidden" name="theme" value="{theme}">
+<span class="search-icon">🔍</span>
+<input type="text" name="search" class="search-input" placeholder="Search metrics, segments, customers..." value="{current_search}">
+<span class="search-badge">Ctrl + K</span>
+</form>
+</div>
+<div class="navbar-right">
+<a href="/?page={active_slug}&collapsed={collapsed_str}&theme={'light' if theme == 'dark' else 'dark'}" target="_self" class="nav-icon" title="Toggle Theme">
+{ '☀️' if theme == 'light' else '🌙' }
+</a>
+<div class="notification-dropdown">
+<span class="nav-icon">
+🔔<span class="notification-badge">3</span>
+</span>
+<div class="notification-content">
+<div class="notification-item" style="font-weight: 700; color: var(--primary);">System Notifications</div>
+<div class="notification-item">🚨 Model Drift: Warning detected on commitment score</div>
+<div class="notification-item">📤 Data Ingestion: Batch import completed successfully</div>
+<div class="notification-item">🔮 Churn Risk: 19 clients flagged as high risk</div>
+</div>
+</div>
+<span class="nav-icon" title="Help & Documentation">❓</span>
+<div class="profile-dropdown">
+<div class="navbar-profile">
+<div class="profile-avatar">AD</div>
+<div class="profile-info">
+<span class="profile-name">Admin User</span>
+<span class="profile-email">admin@retainiq.com</span>
+</div>
+<span class="profile-arrow">▼</span>
+</div>
+<div class="profile-content">
+<a href="/?page=settings&collapsed={collapsed_str}&theme={theme}" target="_self" class="profile-link">⚙️ Account Settings</a>
+<a href="/?logout=true" target="_self" class="profile-link" style="color: var(--red);">🚪 Sign Out</a>
+</div>
+</div>
+</div>
+</div>""", unsafe_allow_html=True)
 
 # Render Custom HTML Sidebar (Appendix C & D & G)
 # Define SVG path strings for sidebar icons
@@ -1004,71 +997,65 @@ svg_triangle = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><pat
 svg_settings = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>'
 svg_logout = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>'
 
-st.markdown(textwrap.dedent(f"""
-<div class="sidebar {collapsed_class} {menu_class}">
-    <div class="sidebar-menu">
-        <div class="sidebar-group-header">ANALYTICS</div>
-        <a href="/?page=dashboard&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('dashboard')}">
-            {svg_home}
-            <span class="nav-label">Dashboard</span>
-        </a>
-        <a href="/?page=explorer&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('explorer')}">
-            {svg_search}
-            <span class="nav-label">Customer Explorer</span>
-        </a>
-        <a href="/?page=simulator&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('simulator')}">
-            {svg_sliders}
-            <span class="nav-label">Counterfactual Simulator</span>
-        </a>
-        <a href="/?page=analytics&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('analytics')}">
-            {svg_chart}
-            <span class="nav-label">Analytics</span>
-        </a>
-        <a href="/?page=explainability&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('explainability')}">
-            {svg_eye}
-            <span class="nav-label">Explainability</span>
-        </a>
-        
-        <div class="sidebar-group-header">DATA & MODELS</div>
-        <a href="/?page=segments&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('segments')}">
-            {svg_grid}
-            <span class="nav-label">Customer Segments</span>
-        </a>
-        <a href="/?page=upload&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('upload')}">
-            {svg_upload}
-            <span class="nav-label">Upload Dataset</span>
-        </a>
-        <a href="/?page=diagnostics&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('diagnostics')}">
-            {svg_activity}
-            <span class="nav-label">Model Diagnostics</span>
-        </a>
-        <a href="/?page=drift&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('drift')}">
-            {svg_triangle}
-            <span class="nav-label">Drift Detection</span>
-        </a>
-        
-        <div class="sidebar-group-header">CONFIGURATION</div>
-        <a href="/?page=settings&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('settings')}">
-            {svg_settings}
-            <span class="nav-label">Settings</span>
-        </a>
-    </div>
-    
-    <div class="user-card">
-        <div class="user-avatar">AD</div>
-        <div class="user-details">
-            <span class="user-name">Admin User</span>
-            <span class="user-email">admin@retainiq.com</span>
-        </div>
-        <span class="user-menu-dots">⋮</span>
-    </div>
-    
-    <a href="/?logout=true" target="_self" class="logout-btn">
-        {svg_logout}
-        <span class="logout-label">Log Out</span>
-    </a>
+st.markdown(f"""<div class="sidebar {collapsed_class} {menu_class}">
+<div class="sidebar-menu">
+<div class="sidebar-group-header">ANALYTICS</div>
+<a href="/?page=dashboard&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('dashboard')}">
+{svg_home}
+<span class="nav-label">Dashboard</span>
+</a>
+<a href="/?page=explorer&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('explorer')}">
+{svg_search}
+<span class="nav-label">Customer Explorer</span>
+</a>
+<a href="/?page=simulator&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('simulator')}">
+{svg_sliders}
+<span class="nav-label">Counterfactual Simulator</span>
+</a>
+<a href="/?page=analytics&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('analytics')}">
+{svg_chart}
+<span class="nav-label">Analytics</span>
+</a>
+<a href="/?page=explainability&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('explainability')}">
+{svg_eye}
+<span class="nav-label">Explainability</span>
+</a>
+<div class="sidebar-group-header">DATA & MODELS</div>
+<a href="/?page=segments&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('segments')}">
+{svg_grid}
+<span class="nav-label">Customer Segments</span>
+</a>
+<a href="/?page=upload&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('upload')}">
+{svg_upload}
+<span class="nav-label">Upload Dataset</span>
+</a>
+<a href="/?page=diagnostics&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('diagnostics')}">
+{svg_activity}
+<span class="nav-label">Model Diagnostics</span>
+</a>
+<a href="/?page=drift&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('drift')}">
+{svg_triangle}
+<span class="nav-label">Drift Detection</span>
+</a>
+<div class="sidebar-group-header">CONFIGURATION</div>
+<a href="/?page=settings&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('settings')}">
+{svg_settings}
+<span class="nav-label">Settings</span>
+</a>
 </div>
-""".strip()), unsafe_allow_html=True)
+<div class="user-card">
+<div class="user-avatar">AD</div>
+<div class="user-details">
+<span class="user-name">Admin User</span>
+<span class="user-email">admin@retainiq.com</span>
+</div>
+<span class="user-menu-dots">⋮</span>
+</div>
+<a href="/?logout=true" target="_self" class="logout-btn">
+{svg_logout}
+<span class="logout-label">Log Out</span>
+</a>
+</div>""", unsafe_allow_html=True)
 
 page = st.session_state.current_page
 
