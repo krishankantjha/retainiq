@@ -39,31 +39,128 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom premium styling rules
-st.markdown(f"""
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap');
-    
-    /* Global layout settings and ambient grid background */
-    .stApp {{
-        background-color: #030014 !important;
+# Parse routing and layout parameters from query params
+if st.query_params.get("logout") == "true":
+    st.query_params.clear()
+    st.session_state.jwt_token = None
+    st.session_state.current_user = None
+    st.cache_data.clear()
+    st.rerun()
+
+# Theme setup
+theme = st.query_params.get("theme", "dark")
+if theme == "light":
+    theme_tokens = f"""
+    --bg: #f1f5f9;
+    --panel: rgba(255, 255, 255, 0.85);
+    --panel-hover: #e2e8f0;
+    --border: rgba(15, 23, 42, 0.08);
+    --text: #0f172a;
+    --muted: #475569;
+    --primary: {primary_color_hex};
+    --primary-hover: #4F46E5;
+    """
+    app_bg_gradient = """
+        background-color: var(--bg) !important;
+        background-image: 
+            radial-gradient(circle at 12% 18%, rgba(99, 102, 241, 0.05), transparent 40%),
+            radial-gradient(circle at 88% 82%, rgba(139, 92, 246, 0.05), transparent 40%),
+            linear-gradient(rgba(0, 0, 0, 0.005) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 0, 0, 0.005) 1px, transparent 1px) !important;
+    """
+else:
+    theme_tokens = f"""
+    --bg: #0b1020;
+    --panel: rgba(18, 23, 45, 0.82);
+    --panel-hover: #1b2140;
+    --border: rgba(255, 255, 255, 0.06);
+    --text: #ffffff;
+    --muted: #9ca3af;
+    --primary: #6C63FF;
+    --primary-hover: #7C73FF;
+    """
+    app_bg_gradient = """
+        background-color: var(--bg) !important;
         background-image: 
             radial-gradient(circle at 12% 18%, rgba(99, 102, 241, 0.12), transparent 40%),
             radial-gradient(circle at 88% 82%, rgba(139, 92, 246, 0.12), transparent 40%),
             radial-gradient(circle at 50% 50%, rgba(2, 6, 23, 0.95), transparent 90%),
             linear-gradient(rgba(255, 255, 255, 0.008) 1px, transparent 1px),
             linear-gradient(90deg, rgba(255, 255, 255, 0.008) 1px, transparent 1px) !important;
+    """
+
+# Sidebar collapse setup
+is_collapsed = (st.query_params.get("collapsed") == "true")
+collapsed_str = "true" if is_collapsed else "false"
+toggle_collapsed_str = "false" if is_collapsed else "true"
+collapsed_class = "collapsed" if is_collapsed else ""
+
+# Main content and navbar paddings
+if is_collapsed:
+    content_padding_left = "calc(var(--sidebar-collapsed-width) + 24px)"
+    navbar_padding_left = "calc(var(--sidebar-collapsed-width) + 24px)"
+else:
+    content_padding_left = "calc(var(--sidebar-width) + 24px)"
+    navbar_padding_left = "calc(var(--sidebar-width) + 24px)"
+
+# Mobile side overlay menu setup
+is_menu_open = (st.query_params.get("menu_open") == "true")
+menu_open_str = "true" if is_menu_open else "false"
+toggle_menu_open_str = "false" if is_menu_open else "true"
+menu_class = "active" if is_menu_open else ""
+
+# Search handling
+if "search" in st.query_params:
+    st.session_state.explorer_search_input = st.query_params.get("search")
+
+# Custom premium styling rules
+st.markdown(f"""
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap');
+    
+    :root {{
+        --navbar-height: 72px;
+        --sidebar-width: 280px;
+        --sidebar-collapsed-width: 80px;
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --transition: all .25s ease;
+        --green: #10B981;
+        --red: #EF4444;
+        --warning: #F59E0B;
+        --shadow-lg: 0 10px 40px rgba(0,0,0,.35);
+        {theme_tokens}
+    }}
+
+    /* Global layout settings and ambient grid background */
+    .stApp {{
+        {app_bg_gradient}
         background-size: 100% 100%, 100% 100%, 100% 100%, 36px 36px, 36px 36px !important;
         background-attachment: fixed !important;
-        color: #f8fafc !important;
+        color: var(--text) !important;
         font-family: 'Inter', sans-serif !important;
     }}
 
-    /* Shift main content block down to clear the sticky top navbar */
+    /* Shift main content block down and right to clear fixed top-navbar and sidebar */
     .block-container {{
-        padding-top: 6.0rem !important;
-        padding-left: 2.5rem !important;
+        padding-top: calc(var(--navbar-height) + 1.5rem) !important;
+        padding-left: {content_padding_left} !important;
         padding-right: 2.5rem !important;
+        transition: var(--transition) !important;
+    }}
+
+    /* Hide default Streamlit header and sidebar */
+    header, [data-testid="stHeader"] {{
+        display: none !important;
+        visibility: hidden !important;
+    }}
+    [data-testid="stSidebar"] {{
+        display: none !important;
+        width: 0 !important;
+    }}
+    [data-testid="stSidebarCollapsedControl"] {{
+        display: none !important;
     }}
 
     /* Title blocks */
@@ -71,7 +168,7 @@ st.markdown(f"""
         font-family: 'Outfit', sans-serif;
         font-weight: 800;
         font-size: 2.8rem;
-        background: linear-gradient(135deg, {primary_color_hex} 0%, #a78bfa 100%);
+        background: linear-gradient(135deg, var(--primary) 0%, #a78bfa 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin-bottom: 0.2rem;
@@ -79,7 +176,7 @@ st.markdown(f"""
     }}
     .subtitle {{
         font-family: 'Inter', sans-serif;
-        color: #94a3b8;
+        color: var(--muted);
         font-size: 1.05rem;
         margin-bottom: 2rem;
         line-height: 1.5;
@@ -91,22 +188,17 @@ st.markdown(f"""
         top: 0;
         left: 0;
         right: 0;
-        height: 70px;
-        background: rgba(3, 0, 20, 0.85) !important;
-        backdrop-filter: blur(20px) !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        height: var(--navbar-height);
+        background: var(--panel) !important;
+        backdrop-filter: blur(18px) !important;
+        border-bottom: 1px solid var(--border) !important;
         display: flex !important;
         align-items: center !important;
         justify-content: space-between !important;
-        padding: 0 2rem 0 18rem !important; /* Indents main header to clear sidebar */
-        z-index: 999999 !important;
-    }}
-    
-    /* Handle sidebar collapse state adjustment for header */
-    @media (max-width: 768px) {{
-        .sticky-navbar {{
-            padding-left: 2rem !important;
-        }}
+        padding: 0 24px 0 {navbar_padding_left} !important;
+        box-shadow: var(--shadow-lg) !important;
+        z-index: 99999 !important;
+        transition: var(--transition) !important;
     }}
     
     .navbar-left {{
@@ -116,23 +208,28 @@ st.markdown(f"""
     }}
     
     .hamburger-menu {{
-        font-size: 1.2rem;
-        color: #64748b;
+        font-size: 1.25rem;
+        color: var(--muted);
         cursor: pointer;
+        transition: var(--transition);
+        user-select: none;
+    }}
+    .hamburger-menu:hover {{
+        color: var(--text);
     }}
     
     .navbar-logo {{
         font-family: 'Outfit', sans-serif;
         font-size: 1.35rem;
         font-weight: 800;
-        color: #ffffff;
+        color: var(--text);
     }}
     
     .navbar-center {{
         flex: 1;
         display: flex;
         justify-content: center;
-        max-width: 450px;
+        max-width: 520px;
         margin: 0 2rem;
     }}
     
@@ -141,26 +238,31 @@ st.markdown(f"""
         width: 100%;
         display: flex;
         align-items: center;
+        transition: var(--transition);
+    }}
+    .search-container:focus-within {{
+        box-shadow: 0 0 15px rgba(108, 99, 255, 0.2);
     }}
     
     .search-icon {{
         position: absolute;
         left: 12px;
-        color: #475569;
+        color: var(--muted);
         font-size: 0.85rem;
     }}
     
     .search-input {{
         width: 100% !important;
         background-color: rgba(15, 23, 42, 0.5) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border: 1px solid var(--border) !important;
         border-radius: 9999px !important;
         padding: 0.45rem 5.0rem 0.45rem 2.2rem !important;
-        color: #f8fafc !important;
+        color: var(--text) !important;
         font-size: 0.82rem !important;
+        transition: var(--transition);
     }}
     .search-input:focus {{
-        border-color: {primary_color_hex} !important;
+        border-color: var(--primary) !important;
         outline: none !important;
     }}
     
@@ -168,11 +270,11 @@ st.markdown(f"""
         position: absolute;
         right: 12px;
         background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        border: 1px solid var(--border);
         border-radius: 4px;
         padding: 1px 6px;
         font-size: 0.68rem;
-        color: #64748b;
+        color: var(--muted);
     }}
     
     .navbar-right {{
@@ -182,16 +284,17 @@ st.markdown(f"""
     }}
     
     .nav-icon {{
-        font-size: 1.05rem;
-        color: #94a3b8;
+        font-size: 1.1rem;
+        color: var(--muted);
+        text-decoration: none;
         cursor: pointer;
-        transition: color 0.15s;
+        transition: var(--transition);
         display: flex;
         align-items: center;
         justify-content: center;
     }}
     .nav-icon:hover {{
-        color: #ffffff;
+        color: var(--text);
     }}
     
     .notification-container {{
@@ -204,7 +307,7 @@ st.markdown(f"""
         position: absolute;
         top: -6px;
         right: -6px;
-        background: #ef4444;
+        background: var(--red);
         color: #ffffff;
         font-size: 0.65rem;
         font-weight: 700;
@@ -213,13 +316,82 @@ st.markdown(f"""
         min-width: 14px;
         text-align: center;
     }}
+
+    /* Dropdown content */
+    .notification-dropdown {{
+        position: relative;
+        display: inline-block;
+    }}
+    .notification-content {{
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 25px;
+        background-color: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        min-width: 250px;
+        box-shadow: var(--shadow-lg);
+        backdrop-filter: blur(18px);
+        padding: 12px;
+        z-index: 100000;
+    }}
+    .notification-dropdown:hover .notification-content {{
+        display: block;
+    }}
+    .notification-item {{
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.78rem;
+        color: var(--text);
+        text-align: left;
+    }}
+    .notification-item:last-child {{
+        border-bottom: none;
+    }}
+
+    /* Profile Dropdown */
+    .profile-dropdown {{
+        position: relative;
+        display: inline-block;
+    }}
+    .profile-content {{
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 35px;
+        background-color: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        min-width: 180px;
+        box-shadow: var(--shadow-lg);
+        backdrop-filter: blur(18px);
+        padding: 8px 0;
+        z-index: 100000;
+    }}
+    .profile-dropdown:hover .profile-content {{
+        display: block;
+    }}
+    .profile-link {{
+        display: block;
+        padding: 8px 16px;
+        color: var(--text);
+        text-decoration: none;
+        font-size: 0.8rem;
+        transition: var(--transition);
+        text-align: left;
+    }}
+    .profile-link:hover {{
+        background-color: var(--panel-hover);
+        color: var(--primary);
+    }}
     
     .navbar-profile {{
         display: flex;
         align-items: center;
         gap: 8px;
         background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--border);
         border-radius: 9999px;
         padding: 4px 10px 4px 4px;
         cursor: pointer;
@@ -241,49 +413,246 @@ st.markdown(f"""
     .profile-info {{
         display: flex;
         flex-direction: column;
+        text-align: left;
     }}
     
     .profile-name {{
         font-size: 0.78rem;
         font-weight: 600;
-        color: #f8fafc;
+        color: var(--text);
         line-height: 1.1;
     }}
     
     .profile-email {{
         font-size: 0.65rem;
-        color: #475569;
+        color: var(--muted);
         line-height: 1.1;
     }}
     
     .profile-arrow {{
         font-size: 0.55rem;
-        color: #475569;
+        color: var(--muted);
         margin-left: 2px;
+    }}
+
+    /* Custom Fixed Sidebar */
+    .sidebar {{
+        position: fixed;
+        top: var(--navbar-height);
+        left: 0;
+        bottom: 0;
+        width: var(--sidebar-width);
+        background: var(--panel) !important;
+        border-right: 1px solid var(--border) !important;
+        backdrop-filter: blur(18px) !important;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 1.5rem 1rem;
+        transition: var(--transition);
+        z-index: 9999;
+        overflow-y: auto;
+    }}
+    .sidebar.collapsed {{
+        width: var(--sidebar-collapsed-width);
+        padding: 1.5rem 0.5rem;
+    }}
+    
+    /* Navigation Link Styles */
+    .nav-item {{
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        height: 48px;
+        color: var(--muted) !important;
+        text-decoration: none !important;
+        border-radius: var(--radius-md);
+        font-size: 15px;
+        font-weight: 500;
+        margin-bottom: 4px;
+        transition: var(--transition);
+    }}
+    .nav-item svg {{
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        stroke: var(--muted);
+        fill: none;
+        transition: var(--transition);
+    }}
+    .nav-item:hover {{
+        background: var(--panel-hover) !important;
+        color: var(--text) !important;
+        transform: translateX(2px);
+    }}
+    .nav-item:hover svg {{
+        stroke: var(--text);
+    }}
+    
+    .nav-item.active {{
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.25) 0%, rgba(99, 102, 241, 0.1) 100%) !important;
+        border: 1px solid var(--primary) !important;
+        border-left: 4px solid var(--primary) !important;
+        color: var(--text) !important;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+    }}
+    .nav-item.active svg {{
+        stroke: var(--text);
+    }}
+    
+    /* Section Headers */
+    .sidebar-group-header {{
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin: 32px 12px 12px 12px;
+        transition: var(--transition);
+        text-align: left;
+    }}
+    .sidebar.collapsed .sidebar-group-header {{
+        opacity: 0;
+        height: 0;
+        margin: 0;
+        overflow: hidden;
+    }}
+    
+    .sidebar.collapsed .nav-label {{
+        display: none;
+    }}
+    .sidebar.collapsed .nav-item {{
+        justify-content: center;
+        padding: 14px 0;
+    }}
+    
+    /* User Card */
+    .user-card {{
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 16px;
+        height: 72px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: var(--transition);
+        margin-top: auto;
+        margin-bottom: 12px;
+        text-align: left;
+    }}
+    .sidebar.collapsed .user-card {{
+        padding: 8px;
+        justify-content: center;
+        border: none;
+        background: transparent;
+    }}
+    
+    .user-avatar {{
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1 0%, #a78bfa 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #ffffff;
+        font-size: 0.82rem;
+        font-family: 'Outfit', sans-serif;
+        flex-shrink: 0;
+    }}
+    
+    .user-details {{
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        flex: 1;
+    }}
+    .sidebar.collapsed .user-details {{
+        display: none;
+    }}
+    
+    .user-name {{
+        font-weight: 700;
+        font-size: 0.82rem;
+        color: var(--text);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }}
+    
+    .user-email {{
+        font-size: 0.7rem;
+        color: var(--muted);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }}
+    
+    .user-menu-dots {{
+        color: var(--muted);
+        font-size: 0.95rem;
+        cursor: pointer;
+    }}
+    .sidebar.collapsed .user-menu-dots {{
+        display: none;
+    }}
+    
+    /* Logout Button */
+    .logout-btn {{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        height: 48px;
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        background: transparent;
+        color: var(--text);
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: var(--transition);
+        cursor: pointer;
+    }}
+    .logout-btn:hover {{
+        background: var(--panel-hover);
+        border-color: var(--primary);
+    }}
+    .logout-btn svg {{
+        stroke: var(--text);
+        fill: none;
+    }}
+    .sidebar.collapsed .logout-label {{
+        display: none;
     }}
 
     /* Glassmorphism containers and cards */
     .glass-card {{
-        background: rgba(15, 23, 42, 0.45) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        border-radius: 12px !important;
+        background: var(--panel) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: var(--radius-md) !important;
         padding: 1.5rem !important;
-        backdrop-filter: blur(20px) !important;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
+        backdrop-filter: blur(18px) !important;
+        box-shadow: var(--shadow-lg) !important;
         margin-bottom: 1rem !important;
     }}
 
     /* Native metrics styling overrides */
     div[data-testid="metric-container"] {{
-        background: rgba(15, 23, 42, 0.45) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        border-radius: 12px !important;
+        background: var(--panel) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: var(--radius-md) !important;
         padding: 1.2rem 1.5rem !important;
-        backdrop-filter: blur(20px) !important;
+        backdrop-filter: blur(18px) !important;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
     }}
     div[data-testid="metric-container"] label {{
-        color: #94a3b8 !important;
+        color: var(--muted) !important;
         font-weight: 600 !important;
         text-transform: uppercase !important;
         letter-spacing: 0.05em !important;
@@ -293,85 +662,30 @@ st.markdown(f"""
     div[data-testid="metric-container"] div[data-testid="stMetricValue"] {{
         font-weight: 800 !important;
         font-size: 1.9rem !important;
-        color: #ffffff !important;
+        color: var(--text) !important;
         font-family: 'Outfit', sans-serif !important;
-    }}
-
-    /* Sidebar glass effect and overrides */
-    section[data-testid="stSidebar"] {{
-        background-color: #090a10 !important;
-        border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
-        backdrop-filter: blur(20px) !important;
-        width: 270px !important;
-    }}
-
-    /* Sidebar Category Header classes */
-    .sidebar-group-header {{
-        font-size: 0.68rem !important;
-        font-weight: 700 !important;
-        color: #475569 !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.08em !important;
-        margin: 1.4rem 0.5rem 0.5rem 0.5rem !important;
-        font-family: 'Inter', sans-serif !important;
-    }}
-
-    /* Sidebar Button customization targeting Streamlit native elements */
-    section[data-testid="stSidebar"] button {{
-        text-align: left !important;
-        border: none !important;
-        border-radius: 8px !important;
-        justify-content: flex-start !important;
-        padding: 0.5rem 0.8rem !important;
-        font-size: 0.85rem !important;
-        font-family: 'Inter', sans-serif !important;
-        transition: all 0.15s ease-in-out !important;
-        margin-bottom: 2px !important;
-    }}
-    
-    /* Styled Active (Primary) Button */
-    section[data-testid="stSidebar"] button[kind="primary"] {{
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.25) 0%, rgba(99, 102, 241, 0.1) 100%) !important;
-        border: 1px solid {primary_color_hex} !important;
-        color: #ffffff !important;
-        font-weight: 600 !important;
-        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15) !important;
-    }}
-    
-    /* Styled Inactive (Secondary) Button */
-    section[data-testid="stSidebar"] button[kind="secondary"] {{
-        background: transparent !important;
-        color: #cbd5e1 !important;
-        border: none !important;
-    }}
-    
-    /* Secondary Hover states */
-    section[data-testid="stSidebar"] button[kind="secondary"]:hover {{
-        background: rgba(99, 102, 241, 0.1) !important;
-        color: #ffffff !important;
-        border: none !important;
     }}
 
     /* Global inputs and selectboxes */
     div[data-baseweb="select"] > div, input {{
-        background-color: rgba(15, 23, 42, 0.6) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        border-radius: 8px !important;
-        color: #f8fafc !important;
+        background-color: var(--panel) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: var(--radius-sm) !important;
+        color: var(--text) !important;
     }}
     div[data-baseweb="select"] > div:hover, input:hover {{
-        border-color: rgba(255, 255, 255, 0.2) !important;
+        border-color: var(--primary) !important;
     }}
 
     /* Tabs Styling */
     button[data-baseweb="tab"] {{
-        color: #94a3b8 !important;
+        color: var(--muted) !important;
         font-weight: 600 !important;
         font-family: 'Inter', sans-serif !important;
     }}
     button[data-baseweb="tab"][aria-selected="true"] {{
-        color: #f8fafc !important;
-        border-bottom-color: {primary_color_hex} !important;
+        color: var(--text) !important;
+        border-bottom-color: var(--primary) !important;
     }}
 
     /* Custom scrollbars */
@@ -390,7 +704,61 @@ st.markdown(f"""
         background: rgba(255, 255, 255, 0.2);
     }}
 
-    /* Centralized reusable visual styling guide */
+    /* Responsive Breakpoints (Appendix H) */
+    /* Laptop range: 1024px - 1400px (standard view) */
+    @media (max-width: 1400px) and (min-width: 1024px) {{
+        .navbar-center {{
+            max-width: 420px !important;
+        }}
+    }}
+    
+    /* Tablet Range: 768px - 1024px */
+    @media (max-width: 1024px) and (min-width: 768px) {{
+        .sidebar {{
+            width: var(--sidebar-collapsed-width) !important;
+            padding: 1.5rem 0.5rem !important;
+        }}
+        .sidebar .nav-label, .sidebar .sidebar-group-header, .sidebar .user-details, .sidebar .user-menu-dots, .sidebar .logout-label {{
+            display: none !important;
+        }}
+        .sidebar .nav-item {{
+            justify-content: center !important;
+            padding: 14px 0 !important;
+        }}
+        .sidebar .user-card {{
+            padding: 8px !important;
+            justify-content: center !important;
+            border: none !important;
+            background: transparent !important;
+        }}
+        .block-container {{
+            padding-left: calc(var(--sidebar-collapsed-width) + 24px) !important;
+        }}
+        .sticky-navbar {{
+            padding-left: calc(var(--sidebar-collapsed-width) + 24px) !important;
+        }}
+    }}
+    
+    /* Mobile Range: < 768px */
+    @media (max-width: 768px) {{
+        .sidebar {{
+            width: var(--sidebar-width) !important;
+            transform: translateX(-100%);
+        }}
+        .sidebar.active {{
+            transform: translateX(0);
+        }}
+        .block-container {{
+            padding-left: 24px !important;
+        }}
+        .sticky-navbar {{
+            padding-left: 24px !important;
+        }}
+        .navbar-center {{
+            display: none !important; /* Hide search bar on mobile headers */
+        }}
+    }}
+    
     .profile-grid {{
         display: grid !important;
         grid-template-columns: 1fr 1fr !important;
@@ -405,26 +773,26 @@ st.markdown(f"""
         display: inline-block !important;
     }}
     .status-badge-success {{
-        color: #10b981 !important;
+        color: var(--green) !important;
         background: rgba(16, 185, 129, 0.1) !important;
     }}
     .status-badge-warning {{
-        color: #f59e0b !important;
+        color: var(--warning) !important;
         background: rgba(245, 158, 11, 0.1) !important;
     }}
     .status-badge-danger {{
-        color: #ef4444 !important;
+        color: var(--red) !important;
         background: rgba(239, 68, 68, 0.1) !important;
     }}
 
     .play-card {{
-        background: rgba(15, 23, 42, 0.45) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        border-left: 4px solid {primary_color_hex} !important;
+        background: var(--panel) !important;
+        border: 1px solid var(--border) !important;
+        border-left: 4px solid var(--primary) !important;
         border-radius: 8px !important;
         padding: 1.1rem !important;
         margin-bottom: 0.8rem !important;
-        backdrop-filter: blur(20px) !important;
+        backdrop-filter: blur(18px) !important;
     }}
     .play-card-header {{
         display: flex !important;
@@ -439,27 +807,27 @@ st.markdown(f"""
     }}
 
     .health-banner {{
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        border-radius: 12px !important;
+        border: 1px solid var(--border) !important;
+        border-radius: var(--radius-md) !important;
         padding: 1.5rem !important;
-        backdrop-filter: blur(20px) !important;
+        backdrop-filter: blur(18px) !important;
         margin-bottom: 2.0rem !important;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
+        box-shadow: var(--shadow-lg) !important;
     }}
     .health-banner-success {{
         background: rgba(16, 185, 129, 0.08) !important;
         border-color: rgba(16, 185, 129, 0.2) !important;
-        border-left: 5px solid #10b981 !important;
+        border-left: 5px solid var(--green) !important;
     }}
     .health-banner-warning {{
         background: rgba(245, 158, 11, 0.08) !important;
         border-color: rgba(245, 158, 11, 0.2) !important;
-        border-left: 5px solid #f59e0b !important;
+        border-left: 5px solid var(--warning) !important;
     }}
     .health-banner-danger {{
         background: rgba(239, 68, 68, 0.08) !important;
         border-color: rgba(239, 68, 68, 0.2) !important;
-        border-left: 5px solid #ef4444 !important;
+        border-left: 5px solid var(--red) !important;
     }}
 </style>
 """, unsafe_allow_html=True)
@@ -532,103 +900,174 @@ if st.session_state.jwt_token is None:
     st.stop()
 
 # --- Authenticated App Context ---
-# Custom Top Sticky Navbar
-st.markdown("""
+# --- Authenticated App Context ---
+
+# Define page mapping configuration for routing (Appendix I / J)
+PAGE_MAP = {
+    "dashboard": "📊 Dashboard",
+    "explorer": "🔍 Customer Explorer",
+    "simulator": "🔮 Counterfactual Simulator",
+    "analytics": "📈 Analytics",
+    "explainability": "🌍 Explainability",
+    "segments": "🧩 Customer Segments",
+    "upload": "📤 Upload Dataset",
+    "diagnostics": "🩺 Model Diagnostics",
+    "drift": "🚨 Drift Detection",
+    "settings": "⚙️ Settings"
+}
+
+# Resolve current page parameter from URL
+active_slug = st.query_params.get("page", "dashboard")
+if active_slug not in PAGE_MAP:
+    active_slug = "dashboard"
+page = PAGE_MAP[active_slug]
+
+# Make sure session state page is synced
+st.session_state.current_page = page
+
+# Setup icons and active highlights for the custom HTML components
+def get_active_class(slug):
+    return "active" if active_slug == slug else ""
+
+current_search = st.query_params.get("search", "")
+
+# Render Custom Top Sticky Navbar (Appendix B)
+st.markdown(f"""
 <div class="sticky-navbar">
     <div class="navbar-left">
-        <span class="hamburger-menu">☰</span>
+        <a href="/?page={active_slug}&collapsed={toggle_collapsed_str}&theme={theme}" target="_self" class="nav-icon" style="font-size: 1.25rem;">
+            <span class="hamburger-menu">☰</span>
+        </a>
         <span class="navbar-logo">Retain<span style="color:#6366f1;">IQ</span></span>
     </div>
+    
     <div class="navbar-center">
-        <div class="search-container">
+        <form action="/" method="get" class="search-container">
+            <input type="hidden" name="page" value="explorer">
+            <input type="hidden" name="collapsed" value="{collapsed_str}">
+            <input type="hidden" name="theme" value="{theme}">
             <span class="search-icon">🔍</span>
-            <input type="text" class="search-input" placeholder="Search metrics, segments, customers...">
+            <input type="text" name="search" class="search-input" placeholder="Search metrics, segments, customers..." value="{current_search}">
             <span class="search-badge">Ctrl + K</span>
-        </div>
+        </form>
     </div>
+    
     <div class="navbar-right">
-        <span class="nav-icon" title="Toggle Dark Mode">🌙</span>
-        <div class="notification-container" title="Notifications">
-            <span class="nav-icon">🔔</span>
-            <span class="notification-badge">3</span>
-        </div>
-        <span class="nav-icon" title="Help & Documentation">❓</span>
-        <div class="navbar-profile">
-            <div class="profile-avatar">AD</div>
-            <div class="profile-info">
-                <span class="profile-name">Admin User</span>
-                <span class="profile-email">admin@retainiq.com</span>
+        <a href="/?page={active_slug}&collapsed={collapsed_str}&theme={'light' if theme == 'dark' else 'dark'}" target="_self" class="nav-icon" title="Toggle Theme">
+            { '☀️' if theme == 'light' else '🌙' }
+        </a>
+        
+        <div class="notification-dropdown">
+            <span class="nav-icon">
+                🔔<span class="notification-badge">3</span>
+            </span>
+            <div class="notification-content">
+                <div class="notification-item" style="font-weight: 700; color: var(--primary);">System Notifications</div>
+                <div class="notification-item">🚨 Model Drift: Warning detected on commitment score</div>
+                <div class="notification-item">📤 Data Ingestion: Batch import completed successfully</div>
+                <div class="notification-item">🔮 Churn Risk: 19 clients flagged as high risk</div>
             </div>
-            <span class="profile-arrow">▼</span>
+        </div>
+        
+        <span class="nav-icon" title="Help & Documentation">❓</span>
+        
+        <div class="profile-dropdown">
+            <div class="navbar-profile">
+                <div class="profile-avatar">AD</div>
+                <div class="profile-info">
+                    <span class="profile-name">Admin User</span>
+                    <span class="profile-email">admin@retainiq.com</span>
+                </div>
+                <span class="profile-arrow">▼</span>
+            </div>
+            <div class="profile-content">
+                <a href="/?page=settings&collapsed={collapsed_str}&theme={theme}" target="_self" class="profile-link">⚙️ Account Settings</a>
+                <a href="/?logout=true" target="_self" class="profile-link" style="color: var(--red);">🚪 Sign Out</a>
+            </div>
         </div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# Sidebar Navigation
-with st.sidebar:
-    st.markdown("<div style='margin-bottom:1.5rem;'><span style='font-size: 1.5rem; font-weight: 800; font-family: Outfit; color: #ffffff;'>Retain<span style='color:#6366f1;'>IQ</span></span></div>", unsafe_allow_html=True)
-    
-    # 1. ANALYTICS Section
-    st.markdown("<div class='sidebar-group-header'>ANALYTICS</div>", unsafe_allow_html=True)
-    analytics_pages = [
-        ("📊 Dashboard", "📊 Dashboard"),
-        ("🔍 Customer Explorer", "🔍 Customer Explorer"),
-        ("🔮 Counterfactual Simulator", "🔮 Counterfactual Simulator"),
-        ("📈 Analytics", "📈 Analytics"),
-        ("🌍 Explainability", "🌍 Explainability")
-    ]
-    for label, page_val in analytics_pages:
-        is_active = (st.session_state.current_page == page_val)
-        btn_type = "primary" if is_active else "secondary"
-        if st.button(label, key=f"nav_{page_val}", type=btn_type, use_container_width=True):
-            st.session_state.current_page = page_val
-            st.rerun()
-            
-    # 2. DATA & MODELS Section
-    st.markdown("<div class='sidebar-group-header'>DATA & MODELS</div>", unsafe_allow_html=True)
-    data_pages = [
-        ("🧩 Customer Segments", "🧩 Customer Segments"),
-        ("📤 Upload Dataset", "📤 Upload Dataset"),
-        ("🩺 Model Diagnostics", "🩺 Model Diagnostics"),
-        ("🚨 Drift Detection", "🚨 Drift Detection")
-    ]
-    for label, page_val in data_pages:
-        is_active = (st.session_state.current_page == page_val)
-        btn_type = "primary" if is_active else "secondary"
-        if st.button(label, key=f"nav_{page_val}", type=btn_type, use_container_width=True):
-            st.session_state.current_page = page_val
-            st.rerun()
-            
-    # 3. CONFIGURATION Section
-    st.markdown("<div class='sidebar-group-header'>CONFIGURATION</div>", unsafe_allow_html=True)
-    config_pages = [
-        ("⚙️ Settings", "⚙️ Settings")
-    ]
-    for label, page_val in config_pages:
-        is_active = (st.session_state.current_page == page_val)
-        btn_type = "primary" if is_active else "secondary"
-        if st.button(label, key=f"nav_{page_val}", type=btn_type, use_container_width=True):
-            st.session_state.current_page = page_val
-            st.rerun()
-            
-    # Styled Admin Profile Card (aligned with the mockup)
-    st.markdown("""
-    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 0.8rem; margin-top: 2rem; display: flex; align-items: center; gap: 10px;">
-        <div style="width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #6366f1 0%, #a78bfa 100%); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #ffffff; font-size: 0.82rem; font-family: 'Outfit';">
-            AD
-        </div>
-        <div style="flex: 1; min-width: 0;">
-            <div style="font-weight: 700; font-size: 0.82rem; color: #f8fafc; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Admin User</div>
-            <div style="font-size: 0.7rem; color: #94a3b8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">admin@retainiq.com</div>
-        </div>
-        <div style="color: #64748b; font-size: 0.95rem; cursor: pointer;">⋮</div>
+# Render Custom HTML Sidebar (Appendix C & D & G)
+# Define SVG path strings for sidebar icons
+svg_home = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>'
+svg_search = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>'
+svg_sliders = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>'
+svg_chart = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>'
+svg_eye = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>'
+svg_grid = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>'
+svg_upload = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path></svg>'
+svg_activity = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>'
+svg_triangle = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>'
+svg_settings = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>'
+svg_logout = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>'
+
+st.markdown(f"""
+<div class="sidebar {collapsed_class} {menu_class}">
+    <div class="sidebar-menu">
+        <div class="sidebar-group-header">ANALYTICS</div>
+        <a href="/?page=dashboard&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('dashboard')}">
+            {svg_home}
+            <span class="nav-label">Dashboard</span>
+        </a>
+        <a href="/?page=explorer&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('explorer')}">
+            {svg_search}
+            <span class="nav-label">Customer Explorer</span>
+        </a>
+        <a href="/?page=simulator&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('simulator')}">
+            {svg_sliders}
+            <span class="nav-label">Counterfactual Simulator</span>
+        </a>
+        <a href="/?page=analytics&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('analytics')}">
+            {svg_chart}
+            <span class="nav-label">Analytics</span>
+        </a>
+        <a href="/?page=explainability&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('explainability')}">
+            {svg_eye}
+            <span class="nav-label">Explainability</span>
+        </a>
+        
+        <div class="sidebar-group-header">DATA & MODELS</div>
+        <a href="/?page=segments&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('segments')}">
+            {svg_grid}
+            <span class="nav-label">Customer Segments</span>
+        </a>
+        <a href="/?page=upload&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('upload')}">
+            {svg_upload}
+            <span class="nav-label">Upload Dataset</span>
+        </a>
+        <a href="/?page=diagnostics&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('diagnostics')}">
+            {svg_activity}
+            <span class="nav-label">Model Diagnostics</span>
+        </a>
+        <a href="/?page=drift&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('drift')}">
+            {svg_triangle}
+            <span class="nav-label">Drift Detection</span>
+        </a>
+        
+        <div class="sidebar-group-header">CONFIGURATION</div>
+        <a href="/?page=settings&collapsed={collapsed_str}&theme={theme}" target="_self" class="nav-item {get_active_class('settings')}">
+            {svg_settings}
+            <span class="nav-label">Settings</span>
+        </a>
     </div>
-    """, unsafe_allow_html=True)
     
-    st.markdown("<div style='margin-top:0.8rem;'></div>", unsafe_allow_html=True)
-    if st.button("Log Out", use_container_width=True, type="secondary", icon="🚪"):
-        logout()
+    <div class="user-card">
+        <div class="user-avatar">AD</div>
+        <div class="user-details">
+            <span class="user-name">Admin User</span>
+            <span class="user-email">admin@retainiq.com</span>
+        </div>
+        <span class="user-menu-dots">⋮</span>
+    </div>
+    
+    <a href="/?logout=true" target="_self" class="logout-btn">
+        {svg_logout}
+        <span class="logout-label">Log Out</span>
+    </a>
+</div>
+""", unsafe_allow_html=True)
 
 page = st.session_state.current_page
 
