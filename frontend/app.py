@@ -121,6 +121,25 @@ menu_class = "active" if is_menu_open else ""
 if "search" in st.query_params:
     st.session_state.explorer_search_input = st.query_params.get("search")
 
+# Navigation Helper Functions (Hybrid Architecture)
+def navigate_to(slug):
+    st.query_params["page"] = slug
+    st.query_params["collapsed"] = "true" if is_collapsed else "false"
+    st.query_params["theme"] = theme
+    st.rerun()
+
+def toggle_sidebar():
+    st.query_params["page"] = st.query_params.get("page", "dashboard")
+    st.query_params["collapsed"] = toggle_collapsed_str
+    st.query_params["theme"] = theme
+    st.rerun()
+
+def toggle_theme():
+    st.query_params["page"] = st.query_params.get("page", "dashboard")
+    st.query_params["collapsed"] = "true" if is_collapsed else "false"
+    st.query_params["theme"] = "light" if theme == "dark" else "dark"
+    st.rerun()
+
 # Custom premium styling rules
 st.markdown(f"""
 <style>
@@ -822,22 +841,189 @@ st.markdown(f"""
         margin-bottom: 2.0rem !important;
         box-shadow: var(--shadow-lg) !important;
     }}
-    .health-banner-success {{
-        background: rgba(16, 185, 129, 0.08) !important;
-        border-color: rgba(16, 185, 129, 0.2) !important;
-        border-left: 5px solid var(--green) !important;
-    }}
-    .health-banner-warning {{
-        background: rgba(245, 158, 11, 0.08) !important;
-        border-color: rgba(245, 158, 11, 0.2) !important;
-        border-left: 5px solid var(--warning) !important;
-    }}
-    .health-banner-danger {{
-        background: rgba(239, 68, 68, 0.08) !important;
-        border-color: rgba(239, 68, 68, 0.2) !important;
-        border-left: 5px solid var(--red) !important;
-    }}
-</style>
+        .health-banner-danger {{
+            background: rgba(239, 68, 68, 0.08) !important;
+            border-color: rgba(239, 68, 68, 0.2) !important;
+            border-left: 5px solid var(--red) !important;
+        }}
+
+        /* --- Hybrid Navigation Overlays --- */
+        /* Disable pointer events on visual links to prevent browser page reloads */
+        .nav-item, .nav-icon, .settings-nav-link, .logout-btn, .search-container {{
+            pointer-events: none !important;
+        }}
+
+        /* Sidebar Button Overlay container styling */
+        .st-key-sidebar_btn_overlay {{
+            position: fixed !important;
+            top: var(--navbar-height) !important;
+            left: 0 !important;
+            bottom: 0 !important;
+            width: var(--sidebar-width) !important;
+            background: transparent !important;
+            border: none !important;
+            padding: 1.5rem 1rem !important;
+            z-index: 10000 !important;
+            pointer-events: none !important;
+            transition: var(--transition) !important;
+        }}
+
+        .st-key-sidebar_btn_overlay.collapsed {{
+            width: var(--sidebar-collapsed-width) !important;
+            padding: 1.5rem 0.5rem !important;
+        }}
+
+        /* Force vertical block to fill container height and use flex space-between */
+        .st-key-sidebar_btn_overlay > div[data-testid="stVerticalBlockBorderWrapper"] > div[data-testid="stVerticalBlock"] {{
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100% !important;
+            justify-content: flex-start !important;
+            gap: 0 !important;
+        }}
+
+        /* The menu sub-container should also be a flex column with no gap */
+        .st-key-sidebar_menu_overlay > div[data-testid="stVerticalBlockBorderWrapper"] > div[data-testid="stVerticalBlock"] {{
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 0 !important;
+        }}
+
+        /* Make every streamlit button wrapper inside overlay have height 48px and margin-bottom 4px */
+        .st-key-sidebar_btn_overlay .stButton {{
+            height: 48px !important;
+            margin-bottom: 4px !important;
+            pointer-events: auto !important;
+        }}
+
+        /* Make the actual button completely transparent and fill the parent wrapper */
+        .st-key-sidebar_btn_overlay .stButton button {{
+            width: 100% !important;
+            height: 100% !important;
+            background: transparent !important;
+            border: none !important;
+            color: transparent !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            cursor: pointer !important;
+        }}
+
+        /* Hover effect on buttons */
+        .st-key-sidebar_btn_overlay .stButton button:hover {{
+            background: var(--panel-hover) !important;
+            border-radius: var(--radius-md) !important;
+        }}
+
+        /* Hover settings overlay button inside profile dropdown */
+        .st-key-btn_settings_nav {{
+            display: none !important;
+            pointer-events: none !important;
+        }}
+
+        .element-container:has(.profile-dropdown:hover) ~ .st-key-btn_settings_nav,
+        .st-key-btn_settings_nav:hover {{
+            display: block !important;
+            position: fixed !important;
+            top: 108px !important;
+            right: 24px !important;
+            width: 180px !important;
+            height: 36px !important;
+            z-index: 100001 !important;
+            pointer-events: auto !important;
+        }}
+
+        .st-key-btn_settings_nav button {{
+            width: 100% !important;
+            height: 100% !important;
+            background: transparent !important;
+            border: none !important;
+            color: transparent !important;
+            box-shadow: none !important;
+        }}
+        .st-key-btn_settings_nav button:hover {{
+            background: var(--panel-hover) !important;
+            color: var(--primary) !important;
+        }}
+
+        /* Hamburger overlay button */
+        .st-key-btn_hamburger {{
+            position: fixed !important;
+            top: 20px !important;
+            left: {navbar_padding_left} !important;
+            width: 32px !important;
+            height: 32px !important;
+            z-index: 100000 !important;
+            pointer-events: auto !important;
+            transition: var(--transition) !important;
+        }}
+        .st-key-btn_hamburger button {{
+            width: 100% !important;
+            height: 100% !important;
+            background: transparent !important;
+            border: none !important;
+            color: transparent !important;
+            box-shadow: none !important;
+        }}
+
+        /* Theme toggle overlay button */
+        .st-key-btn_theme {{
+            position: fixed !important;
+            top: 20px !important;
+            right: 282px !important; /* matches theme toggle icon */
+            width: 32px !important;
+            height: 32px !important;
+            z-index: 100000 !important;
+            pointer-events: auto !important;
+        }}
+        .st-key-btn_theme button {{
+            width: 100% !important;
+            height: 100% !important;
+            background: transparent !important;
+            border: none !important;
+            color: transparent !important;
+            box-shadow: none !important;
+        }}
+
+        /* Search input overlay positioning */
+        .st-key-search_input_nav {{
+            position: fixed !important;
+            top: 18px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            width: 520px !important;
+            z-index: 100000 !important;
+            height: 36px !important;
+        }}
+        @media (max-width: 1400px) and (min-width: 1024px) {{
+            .st-key-search_input_nav {{
+                width: 420px !important;
+            }}
+        }}
+        @media (max-width: 1024px) {{
+            .st-key-search_input_nav {{
+                display: none !important;
+            }}
+        }}
+
+        /* Style the inner Streamlit text input to be transparent so we see the original HTML search container behind it */
+        .st-key-search_input_nav input {{
+            background: transparent !important;
+            border: none !important;
+            color: var(--text) !important;
+            height: 36px !important;
+            padding-left: 2.2rem !important;
+            padding-right: 5.0rem !important;
+            font-size: 0.82rem !important;
+            font-family: 'Inter', sans-serif !important;
+        }}
+        .st-key-search_input_nav label {{
+            display: none !important;
+        }}
+        .st-key-search_input_nav div[data-testid="stInputHelperText"] {{
+            display: none !important;
+        }}
+    </style>
 """, unsafe_allow_html=True)
 
 
@@ -983,7 +1169,7 @@ st.markdown(f"""<div class="sticky-navbar">
 <span class="profile-arrow">▼</span>
 </div>
 <div class="profile-content">
-<a href="/?page=settings&collapsed={collapsed_str}&theme={theme}" target="_self" class="profile-link">⚙️ Account Settings</a>
+<a href="/?page=settings&collapsed={collapsed_str}&theme={theme}" target="_self" class="profile-link settings-nav-link">⚙️ Account Settings</a>
 <a href="/?logout=true" target="_self" class="profile-link" style="color: var(--red);">🚪 Sign Out</a>
 </div>
 </div>
@@ -1063,6 +1249,68 @@ st.markdown(f"""<div class="sidebar {collapsed_class} {menu_class}">
 <span class="logout-label">Log Out</span>
 </a>
 </div>""", unsafe_allow_html=True)
+
+# --- Overlay Widgets for Hybrid Navigation ---
+# 1. Navbar overlays
+if st.button("", key="btn_hamburger"):
+    toggle_sidebar()
+
+if st.button("", key="btn_theme"):
+    toggle_theme()
+
+if st.button("", key="btn_settings_nav"):
+    navigate_to("settings")
+
+# 2. Search input overlay
+search_val = st.text_input(
+    "Search",
+    value=current_search,
+    placeholder="Search metrics, segments, customers...",
+    label_visibility="collapsed",
+    key="search_input_nav"
+)
+if search_val != current_search:
+    st.query_params["page"] = "explorer"
+    st.query_params["search"] = search_val
+    st.query_params["collapsed"] = "true" if is_collapsed else "false"
+    st.query_params["theme"] = theme
+    st.rerun()
+
+# 3. Sidebar container overlay
+with st.container(key="sidebar_btn_overlay"):
+    with st.container(key="sidebar_menu_overlay"):
+        # Spacers align overlay buttons to visual nav anchors
+        st.markdown('<div class="sidebar-group-header" style="opacity: 0; pointer-events: none;">ANALYTICS</div>', unsafe_allow_html=True)
+        if st.button("", key="btn_dashboard"):
+            navigate_to("dashboard")
+        if st.button("", key="btn_explorer"):
+            navigate_to("explorer")
+        if st.button("", key="btn_simulator"):
+            navigate_to("simulator")
+        if st.button("", key="btn_analytics"):
+            navigate_to("analytics")
+        if st.button("", key="btn_explainability"):
+            navigate_to("explainability")
+            
+        st.markdown('<div class="sidebar-group-header" style="opacity: 0; pointer-events: none;">DATA & MODELS</div>', unsafe_allow_html=True)
+        if st.button("", key="btn_segments"):
+            navigate_to("segments")
+        if st.button("", key="btn_upload"):
+            navigate_to("upload")
+        if st.button("", key="btn_diagnostics"):
+            navigate_to("diagnostics")
+        if st.button("", key="btn_drift"):
+            navigate_to("drift")
+            
+        st.markdown('<div class="sidebar-group-header" style="opacity: 0; pointer-events: none;">CONFIGURATION</div>', unsafe_allow_html=True)
+        if st.button("", key="btn_settings"):
+            navigate_to("settings")
+            
+    # User card spacer (margin-top: auto pushes user card and logout button to bottom)
+    st.markdown('<div class="user-card" style="opacity: 0; pointer-events: none;"></div>', unsafe_allow_html=True)
+    if st.button("", key="btn_logout"):
+        st.query_params["logout"] = "true"
+        st.rerun()
 
 page = st.session_state.current_page
 
