@@ -200,12 +200,15 @@ st.markdown(f"""
         visibility: hidden !important;
     }}
     /* Native Sidebar Restyling to match visual panel (Appendix C & D & G) */
-    [data-testid="stSidebar"] {{
+    [data-testid="stSidebar"], [data-testid="stSidebarContent"] {{
         background: var(--panel) !important;
         backdrop-filter: blur(18px) !important;
         border-right: 1px solid var(--border) !important;
         width: var(--sidebar-width) !important;
         transition: var(--transition) !important;
+    }}
+    [data-testid="stSidebarContent"] {{
+        padding: 1.5rem 0.5rem !important;
     }}
     [data-testid="stSidebar"] > div:first-child {{
         padding: 1.5rem 0.5rem !important;
