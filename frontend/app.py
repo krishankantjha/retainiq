@@ -97,12 +97,19 @@ toggle_collapsed_str = "false" if is_collapsed else "true"
 collapsed_class = "collapsed" if is_collapsed else ""
 
 # Main content and navbar paddings
-if is_collapsed:
-    content_padding_left = "calc(var(--sidebar-collapsed-width) + 24px)"
-    navbar_padding_left = "calc(var(--sidebar-collapsed-width) + 24px)"
+# If the user is not authenticated, do not offset the main container for the sidebar/navbar
+if st.session_state.get("jwt_token") is None:
+    content_padding_left = "2.5rem"
+    navbar_padding_left = "2.5rem"
+    padding_top = "2.5rem"
 else:
-    content_padding_left = "calc(var(--sidebar-width) + 24px)"
-    navbar_padding_left = "calc(var(--sidebar-width) + 24px)"
+    padding_top = "calc(var(--navbar-height) + 1.5rem)"
+    if is_collapsed:
+        content_padding_left = "calc(var(--sidebar-collapsed-width) + 24px)"
+        navbar_padding_left = "calc(var(--sidebar-collapsed-width) + 24px)"
+    else:
+        content_padding_left = "calc(var(--sidebar-width) + 24px)"
+        navbar_padding_left = "calc(var(--sidebar-width) + 24px)"
 
 # Mobile side overlay menu setup
 is_menu_open = (st.query_params.get("menu_open") == "true")
@@ -145,7 +152,7 @@ st.markdown(f"""
 
     /* Shift main content block down and right to clear fixed top-navbar and sidebar */
     .block-container {{
-        padding-top: calc(var(--navbar-height) + 1.5rem) !important;
+        padding-top: {padding_top} !important;
         padding-left: {content_padding_left} !important;
         padding-right: 2.5rem !important;
         transition: var(--transition) !important;
