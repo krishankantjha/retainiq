@@ -906,6 +906,16 @@ st.markdown(f"""
             pointer-events: auto !important;
         }}
 
+        /* Elevate the parent element-containers of all overlay controls to stack them on top of the visual layout */
+        .element-container:has(.st-key-sidebar_btn_overlay),
+        .element-container:has(.st-key-btn_hamburger),
+        .element-container:has(.st-key-btn_theme),
+        .element-container:has(.st-key-btn_settings_nav),
+        .element-container:has(.st-key-search_input_nav) {{
+            position: relative !important;
+            z-index: 100000 !important;
+        }}
+
         /* Make the actual button completely transparent and fill the parent wrapper */
         .st-key-sidebar_btn_overlay .stButton button {{
             width: 100% !important;
